@@ -15,6 +15,12 @@ var team # which "team" does this unit belong to
 
 func _ready() -> void:
 	current_health = max_health
+	add_to_group("units")
+
+func turn_start():
+	for unit in get_tree().get_nodes_in_group("units"):
+		unit.movement_remaining = unit.movement_range
+		unit.has_moved = false
 
 
 ## Put this unit on a tile at position

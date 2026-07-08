@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b28iyxlwylpa5" path="res://scripts/camera_script.gd" id="1_1xefc"]
 [ext_resource type="Texture2D" uid="uid://dvbkqw12i4obk" path="res://assets/Materials/SkyBG.png" id="2_l7mlp"]
+[ext_resource type="Script" uid="uid://diiskm44fk6ox" path="res://scripts/HUD.gd" id="2_w22tq"]
 [ext_resource type="Script" uid="uid://bjw6prx0uxiil" path="res://scripts/WorldGen/world_gen.gd" id="3_davhy"]
 [ext_resource type="Resource" uid="uid://bulbwto8ivwib" path="res://Resources/GenerationSettings/Default.tres" id="4_58wc8"]
 [ext_resource type="PackedScene" uid="uid://grijaagmqw4" path="res://scenes/Units/prototype_unit.tscn" id="8_r58of"]
@@ -46,6 +47,17 @@ script = ExtResource("1_1xefc")
 height = Vector2(0, 60)
 rot = Vector2(-25, -80)
 sun = NodePath("../../Scene/DirectionalLight3D")
+
+[node name="HUD" type="CanvasLayer" parent="CameraParent/Camera3D" unique_id=865497326]
+script = ExtResource("2_w22tq")
+
+[node name="End Turn" type="Button" parent="CameraParent/Camera3D/HUD" unique_id=723344998]
+offset_left = 1000.0
+offset_top = 500.0
+offset_right = 1100.0
+offset_bottom = 550.0
+text = "End turn
+"
 
 [node name="Scene" type="Node3D" parent="." unique_id=516166675]
 
@@ -99,3 +111,5 @@ tile_cursor_scene = ExtResource("11_rshvd")
 unit_cursor_scene = ExtResource("13_ydfkh")
 main_camera = NodePath("../../CameraParent/Camera3D")
 p_finder = NodePath("../Pathfinder")
+
+[connection signal="pressed" from="CameraParent/Camera3D/HUD/End Turn" to="CameraParent/Camera3D/HUD" method="_on_end_turn_pressed"]
