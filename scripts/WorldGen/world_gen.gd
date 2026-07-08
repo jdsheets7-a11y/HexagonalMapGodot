@@ -47,35 +47,31 @@ func create_starting_units(count : int):
 		count -= 1
 
 
-## Start of world_generation, time each step
+## Start of world_generation
 func generate_world():
-	var starttime = Time.get_ticks_msec()
-	var interval = {"Start of Generation!" : starttime}
 	
 	## Get all positions through the gridmapper
 	var mapper = GridMapper.new()
 	var positions = mapper.calculate_map_positions(settings)
-	interval["Calculate Map Positions -- "] = Time.get_ticks_msec()
+	
 	
 	## Create the tiles
 	var factory = TileFactory.new()
 	factory.init_factory(settings, tile_parent)
 	var map = factory.create_map(positions)
 	WorldMap.set_map(map)
-	interval["Create Map -- "] = Time.get_ticks_msec()
-
+	
+	
 	## Fill all gaps
 	if settings.modify_height:
 		factory.modify_terrain()
-		interval["Modify terrain and fill Gaps -- "] = Time.get_ticks_msec()
+	
 	
 	## Spawn villages
 	if settings.spawn_villages:
 		var placeable = get_placeable_tiles()
 		object_placer.place_villages(placeable, settings.spacing)
-		interval["Spawn Villages -- "] = Time.get_ticks_msec()
-	
-	print_generation_results(starttime, interval)
+
 
 
 ## This mess of a function loops through the timing results of generate_world and prints them

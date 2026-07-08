@@ -68,7 +68,10 @@ func attempt_move_unit(hit):
 	if not selected_unit or not hit.is_in_group("tiles") or hit is not Tile or not unit_moves.has(hit):
 		print("Attempted to move to invalid tile")
 		return
+	var distance = p_finder.reachable_distances[hit]
 	selected_unit.place_unit(hit.position, hit)
+	selected_unit.movement_remaining -= distance
+	selected_unit.has_moved = true
 	deselect()
 
 
@@ -78,7 +81,7 @@ func select_unit(unit):
 	hide_cursor(tile_cursor)
 	if unit is Unit:
 		highlight_unit(unit)
-		unit_moves = p_finder.find_reachable_tiles(unit.occupied_tile, unit.movement_range)
+		unit_moves = p_finder.find_reachable_tiles(unit.occupied_tile, unit.movement_remaining)
 		p_finder.highlight_tile(unit_moves)
 
 

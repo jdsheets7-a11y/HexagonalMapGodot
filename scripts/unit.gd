@@ -5,7 +5,9 @@ class_name Unit
 @export var max_health: int = 10
 var current_health: int = 10
 @export var movement_range: int = 3
+@export var movement_remaining: int = movement_range
 @export var model: PackedScene
+@export var has_moved: bool = false
 
 var occupied_tile : Tile
 var team # which "team" does this unit belong to

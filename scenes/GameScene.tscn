@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bbqxpsy3vniy8"]
+[gd_scene format=3 uid="uid://bbqxpsy3vniy8"]
 
 [ext_resource type="Script" uid="uid://b28iyxlwylpa5" path="res://scripts/camera_script.gd" id="1_1xefc"]
 [ext_resource type="Texture2D" uid="uid://dvbkqw12i4obk" path="res://assets/Materials/SkyBG.png" id="2_l7mlp"]
@@ -35,36 +35,35 @@ fog_height = 1.0
 dof_blur_far_distance = 40.0
 dof_blur_far_transition = 45.0
 
-[node name="World" type="Node3D"]
+[node name="World" type="Node3D" unique_id=1963662747]
 
-[node name="CameraParent" type="Node3D" parent="."]
+[node name="CameraParent" type="Node3D" parent="." unique_id=2133586496]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.117906, 15.1842, 10.1434)
 
-[node name="Camera3D" type="Camera3D" parent="CameraParent" node_paths=PackedStringArray("sun")]
+[node name="Camera3D" type="Camera3D" parent="CameraParent" unique_id=1929747106 node_paths=PackedStringArray("sun")]
 transform = Transform3D(1, 0, 0, 0, 0.998537, -0.0540788, 0, 0.0540788, 0.998537, 0, 0, 0)
 script = ExtResource("1_1xefc")
-movespeed = 9
 height = Vector2(0, 60)
 rot = Vector2(-25, -80)
 sun = NodePath("../../Scene/DirectionalLight3D")
 
-[node name="Scene" type="Node3D" parent="."]
+[node name="Scene" type="Node3D" parent="." unique_id=516166675]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="Scene"]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Scene" unique_id=765979461]
 environment = SubResource("Environment_f2ci6")
 camera_attributes = SubResource("CameraAttributesPractical_1lvu4")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Scene"]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Scene" unique_id=674886808]
 transform = Transform3D(0.172923, -0.634301, 0.753499, 0.000308392, 0.765058, 0.643961, -0.984935, -0.111123, 0.132492, 0, 0, 0)
 directional_shadow_mode = 0
 sky_mode = 1
 
-[node name="TileParent" type="Node3D" parent="Scene"]
+[node name="TileParent" type="Node3D" parent="Scene" unique_id=1928136653]
 
-[node name="BGCanvasLayer" type="CanvasLayer" parent="."]
+[node name="BGCanvasLayer" type="CanvasLayer" parent="." unique_id=232004319]
 layer = -100
 
-[node name="SpaceBG_img" type="TextureRect" parent="BGCanvasLayer"]
+[node name="SpaceBG_img" type="TextureRect" parent="BGCanvasLayer" unique_id=1334977819]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -76,9 +75,9 @@ texture = ExtResource("2_l7mlp")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="Builder" type="Node" parent="."]
+[node name="Builder" type="Node" parent="." unique_id=2024913899]
 
-[node name="WorldGenerator" type="Node" parent="Builder" node_paths=PackedStringArray("object_placer", "tile_parent", "pfinder")]
+[node name="WorldGenerator" type="Node" parent="Builder" unique_id=1341311391 node_paths=PackedStringArray("object_placer", "tile_parent", "pfinder")]
 script = ExtResource("3_davhy")
 settings = ExtResource("4_58wc8")
 object_placer = NodePath("../ObjectPlacer")
@@ -86,15 +85,15 @@ tile_parent = NodePath("../../Scene/TileParent")
 pfinder = NodePath("../Pathfinder")
 proto_unit = ExtResource("8_r58of")
 
-[node name="ObjectPlacer" type="Node" parent="Builder"]
+[node name="ObjectPlacer" type="Node" parent="Builder" unique_id=504375915]
 script = ExtResource("9_p13dw")
 village = ExtResource("10_hcqfn")
 
-[node name="Pathfinder" type="Node" parent="Builder"]
+[node name="Pathfinder" type="Node" parent="Builder" unique_id=807976087]
 script = ExtResource("10_0b4my")
 highlight_marker = ExtResource("12_0kgq4")
 
-[node name="Interaction_tracker" type="Node3D" parent="Builder" node_paths=PackedStringArray("main_camera", "p_finder")]
+[node name="Interaction_tracker" type="Node3D" parent="Builder" unique_id=1053099130 node_paths=PackedStringArray("main_camera", "p_finder")]
 script = ExtResource("12_tt8b8")
 tile_cursor_scene = ExtResource("11_rshvd")
 unit_cursor_scene = ExtResource("13_ydfkh")

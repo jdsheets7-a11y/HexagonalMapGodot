@@ -4,9 +4,12 @@ class_name Pathfinder
 var neighbor_positions = WorldMap.HEXAGONAL_NEIGHBOR_DIRECTIONS
 @export var highlight_marker : PackedScene
 var markers = []
+var reachable_distances = {}
+
 
 
 func find_reachable_tiles(start : Tile, movement_range: int) -> Array[Node3D]:
+	reachable_distances.clear()
 	var queue = []
 	var visited = []
 	var reachable_tiles : Array[Node3D]
@@ -25,7 +28,10 @@ func find_reachable_tiles(start : Tile, movement_range: int) -> Array[Node3D]:
 		
 		# Add the current tile to the reachable list
 		reachable_tiles.append(current_tile)
-
+		
+		# Measures the distance moved
+		reachable_distances[current_tile] = current_distance
+		
 		var current_pos = current_tile.pos_data.grid_position
 		
 		if WorldMap.is_map_staggered:
