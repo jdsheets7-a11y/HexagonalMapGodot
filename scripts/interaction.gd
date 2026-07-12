@@ -4,12 +4,21 @@ extends Node3D
 @export var unit_cursor_scene : PackedScene
 @export var main_camera : Camera3D
 @export var p_finder : Pathfinder
+@export var proto_unit : PackedScene
 var selected_tile : Node3D
 var selected_unit : Unit
 var unit_moves : Array[Node3D]
-# Cursors
 var tile_cursor : Node3D
 var unit_cursor : Node3D
+var occupied_tile : Tile
+
+var game_state = GameState.PLAYER_TURN
+
+enum GameState {
+	DEPLOYMENT,
+	PLAYER_TURN,
+	ENEMY_TURN
+}
 
 
 func _ready() -> void:
@@ -21,8 +30,14 @@ func _ready() -> void:
 		add_child(unit_cursor)
 	deselect()
 
+func turn_start():
+	for unit in get_tree().get_nodes_in_group("units"):
+		unit.movement_remaining = unit.movement_range
+		unit.has_moved = false
 
-func _input(event: InputEvent) -> void:
+
+
+func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_pos = get_viewport().get_mouse_position()
 		var origin = main_camera.project_ray_origin(mouse_pos)
@@ -31,10 +46,26 @@ func _input(event: InputEvent) -> void:
 		var hit_object = raycast_at_mouse(origin, end)
 		if not hit_object:
 			return
+			
 		if Input.is_action_just_pressed("Click") and event.pressed:
-			attempt_select(hit_object)
+			match game_state:
+				GameState.DEPLOYMENT:
+					attempt_deploy(hit_object)
+				GameState.PLAYER_TURN:
+					attempt_select(hit_object)
+			
 		elif Input.is_action_just_pressed("RightClick"):
-			attempt_move_unit(hit_object)
+			match game_state:
+				GameState.PLAYER_TURN:
+					attempt_move_unit(hit_object)
+
+# Deployment logic goes here
+func attempt_deploy(hit):
+	if hit is not Tile:
+		return
+	var unit = proto_unit.instantiate()
+	add_child(unit)
+	unit.place_unit(hit.position, hit)
 
 
 func raycast_at_mouse(origin, end) -> Node3D:
@@ -85,6 +116,8 @@ func select_unit(unit):
 		p_finder.highlight_tile(unit_moves)
 
 
+
+
 func highlight_tile(tile):
 	selected_unit = null
 	selected_tile = tile
@@ -121,3 +154,11 @@ func hide_cursor(cursor : Node3D):
 	if cursor:
 		move_cursor(cursor, Vector3.ZERO, -10)
 		cursor.visible = false
+
+
+func _on_deploy_mode_pressed() -> void:
+	game_state = GameState.DEPLOYMENT
+
+
+func _on_player_turn_pressed() -> void:
+	game_state = GameState.PLAYER_TURN
