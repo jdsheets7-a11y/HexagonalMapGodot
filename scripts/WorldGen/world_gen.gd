@@ -42,8 +42,9 @@ func create_starting_units(count : int):
 			continue
 		var unit : Unit = proto_unit.instantiate()
 		add_child(unit)
+		unit.team = Unit.TeamStatus.ENEMY
+		unit.update_team_color()
 		unit.place_unit(r_tile.position, r_tile)
-		unit.occupy_tile(r_tile)
 		count -= 1
 
 
@@ -72,27 +73,6 @@ func generate_world():
 		var placeable = get_placeable_tiles()
 		object_placer.place_villages(placeable, settings.spacing)
 
-
-
-## This mess of a function loops through the timing results of generate_world and prints them
-func print_generation_results(start : float, dict : Dictionary):
-	print("\n")
-	var last_val = start
-	var total = 0
-	for key in dict:
-		var val = dict[key]
-		if val == start:
-			print(key)
-			continue
-		var passed = val - last_val
-		print(key, str(passed) + "ms")
-		last_val = val
-		total += passed
-	var s = "ms"
-	if total > 999: 
-		s = "s"
-		total *= 0.001
-	print("Total completion time: ", total, s)
 
 
 ## Ignore buffer and ocean to return for object placer

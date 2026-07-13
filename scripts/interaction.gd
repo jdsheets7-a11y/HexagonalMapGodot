@@ -30,11 +30,11 @@ func _ready() -> void:
 		add_child(unit_cursor)
 	deselect()
 
+
 func turn_start():
 	for unit in get_tree().get_nodes_in_group("units"):
 		unit.movement_remaining = unit.movement_range
 		unit.has_moved = false
-
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -65,6 +65,8 @@ func attempt_deploy(hit):
 		return
 	var unit = proto_unit.instantiate()
 	add_child(unit)
+	unit.team = Unit.TeamStatus.PLAYER
+	unit.update_team_color()
 	unit.place_unit(hit.position, hit)
 
 
