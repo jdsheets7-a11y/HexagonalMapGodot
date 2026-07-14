@@ -3,12 +3,14 @@ class_name Unit
 
 @export var unit_name : String = "Unit"
 @export var max_health: int = 10
-var current_health: int = 10
+@export var current_health: int = 10
 @export var movement_range: int = 3
 @export var movement_remaining: int = movement_range
 @export var model: PackedScene
 @export var has_moved: bool = false
 var occupied_tile : Tile
+var percent = float(current_health) / float(max_health)
+
 
 enum TeamStatus {
 	PLAYER, 
@@ -17,12 +19,19 @@ enum TeamStatus {
 	
 @export var team = TeamStatus.PLAYER
 
+func _process(delta: float) -> void:
+	var camera = get_viewport().get_camera_3d()
+	if camera:
+		$Healthbar.look_at(camera.global_position, Vector3.UP)
+	update_health()
+
 
 func _ready() -> void:
 	current_health = max_health
 	add_to_group("units")
 	var mesh = $CSGCylinder3D
 	mesh.material = mesh.material.duplicate()
+	update_health()
 
 
 ## Put this unit on a tile at position
@@ -48,3 +57,9 @@ func update_team_color():
 		mesh.material.albedo_color = Color.RED
 	elif team == TeamStatus.PLAYER:
 		mesh.material.albedo_color = Color.BLUE
+
+## Update healthbar
+func update_health():
+	$Healthbar/Label3D.text = str(current_health) + "/" + str(max_health)
+	$Healthbar/Fill.scale.x = percent
+	$Healthbar/Fill.position.x = -(1-percent) * 0.5

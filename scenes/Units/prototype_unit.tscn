@@ -1,12 +1,23 @@
 [gd_scene format=3 uid="uid://grijaagmqw4"]
 
-[ext_resource type="Script" uid="uid://j82fso57rw2q" path="res://scripts/unit.gd" id="1_spsi8"]
+[ext_resource type="Script" uid="uid://j82fso57rw2q" path="res://scripts/Units/unit.gd" id="1_spsi8"]
+[ext_resource type="Script" uid="uid://c3gsud8acnplf" path="res://scripts/Units/label_3d.gd" id="2_g46nc"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xvekn"]
 albedo_color = Color(0, 0.6482959, 0.067037225, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_10dfy"]
 size = Vector3(1, 1.98462, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mf2rh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wgq5r"]
+albedo_color = Color(0.38039216, 0.38039216, 0.38039216, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vdmbh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gapq3"]
+albedo_color = Color(0.14890295, 0.5674916, 0.3440664, 1)
 
 [node name="PrototypeUnit" type="Node3D" unique_id=1967531297 groups=["units"]]
 script = ExtResource("1_spsi8")
@@ -20,3 +31,18 @@ material = SubResource("StandardMaterial3D_xvekn")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=1317533844]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.32691, 0)
 shape = SubResource("BoxShape3D_10dfy")
+
+[node name="Healthbar" type="Node3D" parent="." unique_id=2104322698]
+transform = Transform3D(1, 0, 0, 0, 0.3, 0, 0, 0, 0.1, 0, 1.5, 0)
+
+[node name="Background" type="MeshInstance3D" parent="Healthbar" unique_id=1455322455]
+mesh = SubResource("BoxMesh_mf2rh")
+surface_material_override/0 = SubResource("StandardMaterial3D_wgq5r")
+
+[node name="Fill" type="MeshInstance3D" parent="Healthbar" unique_id=1055017659]
+mesh = SubResource("BoxMesh_vdmbh")
+surface_material_override/0 = SubResource("StandardMaterial3D_gapq3")
+
+[node name="Label3D" type="Label3D" parent="Healthbar" unique_id=1064321143]
+font_size = 64
+script = ExtResource("2_g46nc")
