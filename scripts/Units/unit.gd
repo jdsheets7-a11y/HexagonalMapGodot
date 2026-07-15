@@ -1,7 +1,7 @@
 extends Node3D
 class_name Unit
 
-@export var unit_name : String = "Unit"
+@export var unit_name : String = "Warrior"
 @export var max_health: int = 10
 @export var current_health: int = 10
 @export var movement_range: int = 3
@@ -9,7 +9,6 @@ class_name Unit
 @export var model: PackedScene
 @export var has_moved: bool = false
 var occupied_tile : Tile
-var percent = float(current_health) / float(max_health)
 
 
 enum TeamStatus {
@@ -20,9 +19,6 @@ enum TeamStatus {
 @export var team = TeamStatus.PLAYER
 
 func _process(delta: float) -> void:
-	var camera = get_viewport().get_camera_3d()
-	if camera:
-		$Healthbar.look_at(camera.global_position, Vector3.UP)
 	update_health()
 
 
@@ -31,7 +27,12 @@ func _ready() -> void:
 	add_to_group("units")
 	var mesh = $CSGCylinder3D
 	mesh.material = mesh.material.duplicate()
+	$Healthbar/Sprite3D.texture = $Healthbar/SubViewport.get_texture()
 	update_health()
+	$Healthbar/SubViewport/Control/ProgressBar.value = 10
+	$Healthbar/SubViewport/Control/ProgressBar.max_value = 10
+	print($Healthbar/SubViewport/Control/ProgressBar.value)
+
 
 
 ## Put this unit on a tile at position
@@ -60,6 +61,6 @@ func update_team_color():
 
 ## Update healthbar
 func update_health():
-	$Healthbar/Label3D.text = str(current_health) + "/" + str(max_health)
-	$Healthbar/Fill.scale.x = percent
-	$Healthbar/Fill.position.x = -(1-percent) * 0.5
+	$Healthbar/SubViewport/Control/ProgressBar.value = current_health
+	$Healthbar/SubViewport/Control/ProgressBar.max_value = max_health
+	$Healthbar/Label3D.text = "%d / %d" % [current_health, max_health]

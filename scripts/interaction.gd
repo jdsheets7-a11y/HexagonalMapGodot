@@ -57,9 +57,23 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif Input.is_action_just_pressed("RightClick"):
 			match game_state:
 				GameState.PLAYER_TURN:
-					attempt_move_unit(hit_object)
+					if hit_object.is_in_group("units"):
+						attempt_attack(hit_object)
+					else:
+						attempt_move_unit(hit_object)
 
-# Deployment logic goes here
+# Movement logic
+func attempt_move_unit(hit):
+	if not selected_unit or not hit.is_in_group("tiles") or hit is not Tile or not unit_moves.has(hit):
+		print("Attempted to move to invalid tile")
+		return
+	var distance = p_finder.reachable_distances[hit]
+	selected_unit.place_unit(hit.position, hit)
+	selected_unit.movement_remaining -= distance
+	selected_unit.has_moved = true
+	deselect()
+
+# Deployment logic
 func attempt_deploy(hit):
 	if hit is not Tile:
 		return
@@ -68,6 +82,15 @@ func attempt_deploy(hit):
 	unit.team = Unit.TeamStatus.PLAYER
 	unit.update_team_color()
 	unit.place_unit(hit.position, hit)
+
+# Attacking logic
+func attempt_attack(target):
+	if not selected_unit:
+		return
+	if target.team == selected_unit.team:
+		print("Cannot attack friendly units")
+	else:
+		print(selected_unit.unit_name, " attacks ", target.unit_name)
 
 
 func raycast_at_mouse(origin, end) -> Node3D:
@@ -97,15 +120,6 @@ func attempt_select(hit):
 		select_unit(hit)
 
 
-func attempt_move_unit(hit):
-	if not selected_unit or not hit.is_in_group("tiles") or hit is not Tile or not unit_moves.has(hit):
-		print("Attempted to move to invalid tile")
-		return
-	var distance = p_finder.reachable_distances[hit]
-	selected_unit.place_unit(hit.position, hit)
-	selected_unit.movement_remaining -= distance
-	selected_unit.has_moved = true
-	deselect()
 
 
 func select_unit(unit):
@@ -116,7 +130,6 @@ func select_unit(unit):
 		highlight_unit(unit)
 		unit_moves = p_finder.find_reachable_tiles(unit.occupied_tile, unit.movement_remaining)
 		p_finder.highlight_tile(unit_moves)
-
 
 
 
