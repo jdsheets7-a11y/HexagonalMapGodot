@@ -62,16 +62,21 @@ func _unhandled_input(event: InputEvent) -> void:
 					else:
 						attempt_move_unit(hit_object)
 
+
 # Movement logic
 func attempt_move_unit(hit):
-	if not selected_unit or not hit.is_in_group("tiles") or hit is not Tile or not unit_moves.has(hit):
+	if not selected_unit or not hit.is_in_group("tiles") or hit is not Tile:
 		print("Attempted to move to invalid tile")
+		return
+	if not unit_moves.has(hit):
+		print("Not enough movement")
 		return
 	var distance = p_finder.reachable_distances[hit]
 	selected_unit.place_unit(hit.position, hit)
 	selected_unit.movement_remaining -= distance
 	selected_unit.has_moved = true
 	deselect()
+
 
 # Deployment logic
 func attempt_deploy(hit):
@@ -83,14 +88,32 @@ func attempt_deploy(hit):
 	unit.update_team_color()
 	unit.place_unit(hit.position, hit)
 
+
 # Attacking logic
 func attempt_attack(target):
 	if not selected_unit:
 		return
+	if selected_unit.attacks_remaining <= 0:
+		print("Cannot attack again")
+		return
 	if target.team == selected_unit.team:
 		print("Cannot attack friendly units")
-	else:
-		print(selected_unit.unit_name, " attacks ", target.unit_name)
+		return
+		
+	var attack_tiles = p_finder.find_attackable_tiles(
+		selected_unit.occupied_tile,
+		selected_unit.attack_range
+	)
+	
+	if not attack_tiles.has(target.occupied_tile):
+		print("target out of range")
+		return
+	
+	target.current_health -= 1
+	target.update_health()
+	selected_unit.attacks_remaining -= 1
+	print(selected_unit.unit_name, " attacks ", target.unit_name)
+	print("this unit has ", selected_unit.attacks_remaining, " attacks left")
 
 
 func raycast_at_mouse(origin, end) -> Node3D:
@@ -118,7 +141,6 @@ func attempt_select(hit):
 		highlight_tile(hit)
 	elif hit.is_in_group("units"):
 		select_unit(hit)
-
 
 
 

@@ -7,17 +7,16 @@ var markers = []
 var reachable_distances = {}
 
 
-
 func find_reachable_tiles(start : Tile, movement_range: int) -> Array[Node3D]:
 	reachable_distances.clear()
 	var queue = []
 	var visited = []
 	var reachable_tiles : Array[Node3D]
-
+	
 	# Start from the initial tile
 	queue.append({"tile": start, "distance": 0})
 	visited.append(Vector2(start.pos_data.grid_position.x, start.pos_data.grid_position.y))
-
+	
 	while queue.size() > 0:
 		var current = queue.pop_front()
 		var current_tile : Tile = current["tile"]
@@ -48,9 +47,52 @@ func find_reachable_tiles(start : Tile, movement_range: int) -> Array[Node3D]:
 			var neighbor_tile = WorldMap.map_as_dict[neighbor_coords]
 			queue.append({"tile": neighbor_tile, "distance": current_distance + 1})
 			visited.append(neighbor_coords)
-
+		
 	return reachable_tiles
 
+
+func find_attackable_tiles(start : Tile, attack_range: int) -> Array[Node3D]:
+	reachable_distances.clear()
+	var queue = []
+	var visited = []
+	var attackable_tiles : Array[Node3D]
+
+	# Start from the initial tile
+	queue.append({"tile": start, "distance": 0})
+	visited.append(Vector2(start.pos_data.grid_position.x, start.pos_data.grid_position.y))
+
+	while queue.size() > 0:
+		var current = queue.pop_front()
+		var current_tile : Tile = current["tile"]
+		var current_distance : int = current["distance"]
+		
+		if current_distance > attack_range:
+			continue
+		
+		# Add the current tile to the reachable list
+		attackable_tiles.append(current_tile)
+		
+		# Measures the distance moved
+		reachable_distances[current_tile] = current_distance
+		
+		var current_pos = current_tile.pos_data.grid_position
+		
+		if WorldMap.is_map_staggered:
+			if current_pos.x % 2 == 0:
+				neighbor_positions = WorldMap.NEIGHBOR_DIRECTIONS_EVEN
+			else:
+				neighbor_positions = WorldMap.NEIGHBOR_DIRECTIONS_ODD
+		
+		# Explore neighbors
+		for direction in neighbor_positions:
+			var neighbor_coords = Vector2(current_pos.x + int(direction.x), current_pos.y + int(direction.y))
+			if not WorldMap.map_as_dict.has(neighbor_coords) or visited.has(neighbor_coords):
+				continue
+			var neighbor_tile = WorldMap.map_as_dict[neighbor_coords]
+			queue.append({"tile": neighbor_tile, "distance": current_distance + 1})
+			visited.append(neighbor_coords)
+		
+	return attackable_tiles
 
 func is_tile_valid(coords : Vector2) -> bool:
 	var valid = false

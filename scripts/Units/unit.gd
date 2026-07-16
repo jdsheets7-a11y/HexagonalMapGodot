@@ -5,21 +5,21 @@ class_name Unit
 @export var max_health: int = 10
 @export var current_health: int = 10
 @export var movement_range: int = 3
+@export var damage: int = 1
+@export var attack_range: int = 1
+@export var attacks: int = 2
+@export var attacks_remaining: int = attacks
+
 @export var movement_remaining: int = movement_range
 @export var model: PackedScene
 @export var has_moved: bool = false
+@export var has_attacked: bool = false
 var occupied_tile : Tile
 
-
-enum TeamStatus {
-	PLAYER, 
-	ENEMY,
-	}
-	
 @export var team = TeamStatus.PLAYER
 
-func _process(delta: float) -> void:
-	update_health()
+enum TeamStatus {PLAYER, ENEMY}
+
 
 
 func _ready() -> void:
@@ -32,7 +32,6 @@ func _ready() -> void:
 	$Healthbar/SubViewport/Control/ProgressBar.value = 10
 	$Healthbar/SubViewport/Control/ProgressBar.max_value = 10
 	print($Healthbar/SubViewport/Control/ProgressBar.value)
-
 
 
 ## Put this unit on a tile at position
@@ -50,6 +49,7 @@ func occupy_tile(tile : Tile):
 func leave_tile():
 	if occupied_tile:
 		occupied_tile.occupier = null
+
 
 ## Changing color depending on team
 func update_team_color():
