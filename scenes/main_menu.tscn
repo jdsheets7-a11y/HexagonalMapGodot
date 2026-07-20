@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://civ1b00og8exx"]
+
+[ext_resource type="Script" uid="uid://4pqwhcmqh35t" path="res://scripts/main_menu.gd" id="1_l6cm7"]
+
+[node name="MainMenu" type="Control" unique_id=287742672]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_right = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_l6cm7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1193366529]
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 93.0
+
+[node name="HostButton" type="Button" parent="VBoxContainer" unique_id=113223272]
+layout_mode = 2
+text = "Host Game"
+
+[node name="HBoxContainer" type="BoxContainer" parent="VBoxContainer" unique_id=365629584]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="IPAddress" type="LineEdit" parent="VBoxContainer/HBoxContainer" unique_id=1819604822]
+layout_mode = 2
+text = "127.0.0.1"
+
+[node name="JoinButton" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=579202088]
+layout_mode = 2
+text = "Join Game"
+
+[node name="StatusLabel" type="Label" parent="VBoxContainer" unique_id=1350764732]
+layout_mode = 2
+text = "Disconnected"
+
+[connection signal="pressed" from="VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]

@@ -15,7 +15,7 @@ extends Node
 func _ready() -> void:
 	init_seed()
 	generate_world()
-	create_starting_units(floor(settings.radius/2))  ## prototyping pathfinding and units
+#	create_starting_units(floor(settings.radius/2))  ## prototyping pathfinding and units
 
 
 # Randomize if no seed has been set
@@ -32,20 +32,20 @@ func init_seed():
 
 
 ## placeholder functionality for placing units onto the map
-func create_starting_units(count : int):
-	var safety_count = 0 #Add safety counter in case no valid tiles
-	## Test pathfinder
-	while count > 0 and safety_count < 50:
-		var r_tile : Tile = WorldMap.map.pick_random()
-		if r_tile.mesh_data.type == Tile.biome_type.Ocean or r_tile.occupier != null:
-			safety_count += 1
-			continue
-		var unit : Unit = proto_unit.instantiate()
-		add_child(unit)
-		unit.team = Unit.TeamStatus.ENEMY
-		unit.update_team_color()
-		unit.place_unit(r_tile.position, r_tile)
-		count -= 1
+#func create_starting_units(count : int):
+	#var safety_count = 0 #Add safety counter in case no valid tiles
+	### Test pathfinder
+	#while count > 0 and safety_count < 50:
+		#var r_tile : Tile = WorldMap.map.pick_random()
+		#if r_tile.mesh_data.type == Tile.biome_type.Ocean or r_tile.occupier != null:
+			#safety_count += 1
+			#continue
+		#var unit : Unit = proto_unit.instantiate()
+		#add_child(unit)
+		#unit.team = Unit.TeamStatus.TEAM_2
+		#unit.update_team_color()
+		#unit.place_unit(r_tile.position, r_tile)
+		#count -= 1
 
 
 ## Start of world_generation

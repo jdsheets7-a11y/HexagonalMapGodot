@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://grijaagmqw4"]
+[gd_scene format=3 uid="uid://vgm0hntesu7v"]
 
-[ext_resource type="Script" uid="uid://j82fso57rw2q" path="res://scripts/Units/unit.gd" id="1_x24f0"]
+[ext_resource type="Script" uid="uid://j82fso57rw2q" path="res://scripts/Units/unit.gd" id="1_30yl3"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xvekn"]
 albedo_color = Color(0, 0.6482959, 0.067037225, 1)
@@ -13,14 +13,23 @@ size = Vector3(1, 1.98462, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n5tbo"]
 bg_color = Color(0.38203153, 0.69406766, 0.12571213, 1)
 
+[sub_resource type="GDScript" id="GDScript_x24f0"]
+script/source = "extends Label3D
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
+
 [node name="PrototypeUnit" type="Node3D" unique_id=1967531297 groups=["units"]]
-script = ExtResource("1_x24f0")
-unit_name = "Soldier"
-max_health = 10
-current_health = 10
+script = ExtResource("1_30yl3")
+unit_name = "Ranger"
+max_health = 5
+current_health = 5
 movement_range = 3
-damage = 2
-attack_range = 1
+damage = 1
+attack_range = 3
 attacks = 2
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="." unique_id=988826089]
@@ -72,7 +81,8 @@ billboard = 1
 text = "
 "
 font_size = 248
+script = SubResource("GDScript_x24f0")
 
-[node name="NameTag" type="Label3D" parent="." unique_id=362411878]
+[node name="NameTag" type="Label3D" parent="." unique_id=519903955]
 offset = Vector2(0, 550)
 font_size = 248

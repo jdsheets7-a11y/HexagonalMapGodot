@@ -4,7 +4,8 @@ extends Node3D
 @export var unit_cursor_scene : PackedScene
 @export var main_camera : Camera3D
 @export var p_finder : Pathfinder
-@export var proto_unit : PackedScene
+@export var proto_unit : PackedScene 
+@export var ranged_unit : PackedScene 
 var selected_tile : Node3D
 var selected_unit : Unit
 var unit_moves : Array[Node3D]
@@ -12,13 +13,6 @@ var tile_cursor : Node3D
 var unit_cursor : Node3D
 var occupied_tile : Tile
 
-var game_state = GameState.PLAYER_TURN
-
-enum GameState {
-	DEPLOYMENT,
-	PLAYER_TURN,
-	ENEMY_TURN
-}
 
 
 func _ready() -> void:
@@ -29,6 +23,7 @@ func _ready() -> void:
 		unit_cursor = unit_cursor_scene.instantiate()
 		add_child(unit_cursor)
 	deselect()
+
 
 
 func turn_start():
@@ -44,76 +39,31 @@ func _unhandled_input(event: InputEvent) -> void:
 		var dir = main_camera.project_ray_normal(mouse_pos)
 		var end = origin + dir * 1000
 		var hit_object = raycast_at_mouse(origin, end)
+		
 		if not hit_object:
 			return
-			
-		if Input.is_action_just_pressed("Click") and event.pressed:
-			match game_state:
-				GameState.DEPLOYMENT:
-					attempt_deploy(hit_object)
-				GameState.PLAYER_TURN:
-					attempt_select(hit_object)
-			
-		elif Input.is_action_just_pressed("RightClick"):
-			match game_state:
-				GameState.PLAYER_TURN:
-					if hit_object.is_in_group("units"):
-						attempt_attack(hit_object)
-					else:
-						attempt_move_unit(hit_object)
-
-
-# Movement logic
-func attempt_move_unit(hit):
-	if not selected_unit or not hit.is_in_group("tiles") or hit is not Tile:
-		print("Attempted to move to invalid tile")
-		return
-	if not unit_moves.has(hit):
-		print("Not enough movement")
-		return
-	var distance = p_finder.reachable_distances[hit]
-	selected_unit.place_unit(hit.position, hit)
-	selected_unit.movement_remaining -= distance
-	selected_unit.has_moved = true
-	deselect()
-
-
-# Deployment logic
-func attempt_deploy(hit):
-	if hit is not Tile:
-		return
-	var unit = proto_unit.instantiate()
-	add_child(unit)
-	unit.team = Unit.TeamStatus.PLAYER
-	unit.update_team_color()
-	unit.place_unit(hit.position, hit)
-
-
-# Attacking logic
-func attempt_attack(target):
-	if not selected_unit:
-		return
-	if selected_unit.attacks_remaining <= 0:
-		print("Cannot attack again")
-		return
-	if target.team == selected_unit.team:
-		print("Cannot attack friendly units")
-		return
 		
-	var attack_tiles = p_finder.find_attackable_tiles(
-		selected_unit.occupied_tile,
-		selected_unit.attack_range
-	)
-	
-	if not attack_tiles.has(target.occupied_tile):
-		print("target out of range")
-		return
-	
-	target.current_health -= 1
-	target.update_health()
-	selected_unit.attacks_remaining -= 1
-	print(selected_unit.unit_name, " attacks ", target.unit_name)
-	print("this unit has ", selected_unit.attacks_remaining, " attacks left")
+		if Input.is_action_just_pressed("Click") and event.pressed:
+			match GameManager.game_state:
+				GameManager.GameState.DEPLOYMENT:
+					GameManager.request_deploy_unit("RANGED_UNIT", hit_object)
+				GameManager.GameState.TEAM_1_TURN:
+					attempt_select(hit_object)
+		
+		elif Input.is_action_just_pressed("RightClick"):
+			match GameManager.game_state:
+				GameManager.GameState.TEAM_1_TURN:
+					if hit_object.is_in_group("units"):
+						GameManager.try_attack(selected_unit, hit_object, p_finder)
+					else:
+						if not p_finder.reachable_distances.has(hit_object):
+							print("Tile is not reachable")
+							return
+						
+						var distance = p_finder.reachable_distances[hit_object]
+						print("Distance: ", distance)
+						GameManager.request_move_unit(selected_unit, hit_object, distance)
+
 
 
 func raycast_at_mouse(origin, end) -> Node3D:
@@ -127,6 +77,14 @@ func raycast_at_mouse(origin, end) -> Node3D:
 			return null
 
 
+
+func attempt_select(hit):
+	if hit.is_in_group("tiles"):
+		highlight_tile(hit)
+	elif hit.is_in_group("units"):
+		select_unit(hit)
+
+
 func deselect():
 	hide_cursor(tile_cursor)
 	hide_cursor(unit_cursor)
@@ -135,16 +93,10 @@ func deselect():
 	p_finder.clear_highlight()
 
 
-func attempt_select(hit):
-	deselect()
-	if hit.is_in_group("tiles"):
-		highlight_tile(hit)
-	elif hit.is_in_group("units"):
-		select_unit(hit)
-
-
 
 func select_unit(unit):
+	deselect()
+	
 	selected_tile = null
 	selected_unit = unit
 	hide_cursor(tile_cursor)
@@ -154,8 +106,9 @@ func select_unit(unit):
 		p_finder.highlight_tile(unit_moves)
 
 
-
 func highlight_tile(tile):
+	deselect()
+	
 	selected_unit = null
 	selected_tile = tile
 	hide_cursor(unit_cursor)
@@ -191,11 +144,3 @@ func hide_cursor(cursor : Node3D):
 	if cursor:
 		move_cursor(cursor, Vector3.ZERO, -10)
 		cursor.visible = false
-
-
-func _on_deploy_mode_pressed() -> void:
-	game_state = GameState.DEPLOYMENT
-
-
-func _on_player_turn_pressed() -> void:
-	game_state = GameState.PLAYER_TURN

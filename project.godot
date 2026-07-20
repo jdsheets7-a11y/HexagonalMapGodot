@@ -15,13 +15,15 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Warhammer Game"
-run/main_scene="res://scenes/GameScene.tscn"
+run/main_scene="uid://civ1b00og8exx"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 WorldMap="*res://scripts/WorldGen/world.gd"
+GameManager="*uid://dkveaxhndx1n7"
+UnitDatabase="*uid://c7e4giauw0kh6"
 
 [display]
 

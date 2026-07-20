@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://bb3hit25an5ti" path="res://scenes/Cursors/path_overlay.tscn" id="12_0kgq4"]
 [ext_resource type="Script" uid="uid://8c4mygj6ghrg" path="res://scripts/interaction.gd" id="12_tt8b8"]
 [ext_resource type="PackedScene" uid="uid://cqxjxq25t6wuy" path="res://scenes/Cursors/unit_cursor.tscn" id="13_ydfkh"]
+[ext_resource type="PackedScene" uid="uid://vgm0hntesu7v" path="res://scenes/Units/ranged_unit.tscn" id="14_e8rlm"]
 
 [sub_resource type="Environment" id="Environment_f2ci6"]
 background_mode = 3
@@ -73,6 +74,14 @@ offset_right = 1250.0
 offset_bottom = 550.0
 text = "Player Turn"
 
+[node name="TurnCounter" type="Label" parent="CameraParent/Camera3D/HUD" unique_id=1283066970]
+offset_left = 1000.0
+offset_top = 20.0
+offset_right = 1089.0
+offset_bottom = 65.0
+theme_override_font_sizes/font_size = 32
+text = "Turn: "
+
 [node name="Scene" type="Node3D" parent="." unique_id=516166675]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Scene" unique_id=765979461]
@@ -126,7 +135,8 @@ unit_cursor_scene = ExtResource("13_ydfkh")
 main_camera = NodePath("../../CameraParent/Camera3D")
 p_finder = NodePath("../Pathfinder")
 proto_unit = ExtResource("8_r58of")
+ranged_unit = ExtResource("14_e8rlm")
 
 [connection signal="pressed" from="CameraParent/Camera3D/HUD/End Turn" to="CameraParent/Camera3D/HUD" method="_on_end_turn_pressed"]
-[connection signal="pressed" from="CameraParent/Camera3D/HUD/Deploy Mode" to="Builder/Interaction_tracker" method="_on_deploy_mode_pressed"]
-[connection signal="pressed" from="CameraParent/Camera3D/HUD/Player Turn" to="Builder/Interaction_tracker" method="_on_player_turn_pressed"]
+[connection signal="pressed" from="CameraParent/Camera3D/HUD/Deploy Mode" to="CameraParent/Camera3D/HUD" method="_on_deploy_mode_pressed"]
+[connection signal="pressed" from="CameraParent/Camera3D/HUD/Player Turn" to="CameraParent/Camera3D/HUD" method="_on_player_turn_pressed"]
