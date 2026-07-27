@@ -11,7 +11,6 @@ func _ready() -> void:
 	multiplayer.connection_failed.connect(_connection_failed)
 
 
-
 func _on_host_button_pressed() -> void:
 	var error = peer.create_server(PORT)
 	
@@ -20,8 +19,12 @@ func _on_host_button_pressed() -> void:
 		return
 	
 	multiplayer.multiplayer_peer = peer
+	
+	GameManager.peer_to_team[1] = Unit.TeamStatus.TEAM_1
+	
+	print("Assigned host to team 1")
+	
 	$VBoxContainer/StatusLabel.text = "Hosting..."
-
 
 
 func _on_join_button_pressed() -> void:
@@ -38,9 +41,23 @@ func _on_join_button_pressed() -> void:
 	$VBoxContainer/StatusLabel.text = "Connecting..."
 
 
+func assign_team(peer_id: int):
+	if not multiplayer.is_server():
+		return
+	
+	if GameManager.peer_to_team.is_empty():
+		GameManager.peer_to_team[peer_id] = Unit.TeamStatus.TEAM_1
+	else:
+		GameManager.peer_to_team[peer_id] = Unit.TeamStatus.TEAM_2
+	
+	print("Assigned peer ", peer_id, " to team ", GameManager.peer_to_team[peer_id])
+
+
 func _player_connected(id):
 	print("Player connected: ", id)
+	
 	if multiplayer.is_server():
+		assign_team(id)
 		GameManager.start_game.rpc()
 
 func _connected_to_server():

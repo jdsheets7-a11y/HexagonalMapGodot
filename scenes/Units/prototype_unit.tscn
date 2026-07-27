@@ -15,13 +15,6 @@ bg_color = Color(0.38203153, 0.69406766, 0.12571213, 1)
 
 [node name="PrototypeUnit" type="Node3D" unique_id=1967531297 groups=["units"]]
 script = ExtResource("1_x24f0")
-unit_name = "Soldier"
-max_health = 10
-current_health = 10
-movement_range = 3
-damage = 2
-attack_range = 1
-attacks = 2
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="." unique_id=988826089]
 sides = 12

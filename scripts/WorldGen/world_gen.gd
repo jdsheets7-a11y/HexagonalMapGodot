@@ -13,39 +13,29 @@ extends Node
 
 ## Starting point: Generate a random seed, create the tiles, place POI's
 func _ready() -> void:
+	if multiplayer.is_server():
+		init_seed()
+		GameManager.send_world_seed.rpc(settings.map_seed)
+		generate_world()
+
+
+
+func start_generation(seed: int):
+	settings.map_seed = seed
 	init_seed()
 	generate_world()
-#	create_starting_units(floor(settings.radius/2))  ## prototyping pathfinding and units
 
 
 # Randomize if no seed has been set
 func init_seed():
 	if settings.map_seed == 0 or settings.map_seed == null:
 		print("Randomizing seed")
-		settings.biome_noise.seed = randi() #New map_seed for this generation
-		settings.heightmap_noise.seed = randi()
-		settings.ocean_noise.seed = randi()
-	else:
-		settings.biome_noise.seed = settings.map_seed
-		settings.heightmap_noise.seed = settings.map_seed
-		settings.ocean_noise.seed = settings.map_seed
+		settings.map_seed = randi()
 
+	settings.biome_noise.seed = settings.map_seed
+	settings.heightmap_noise.seed = settings.map_seed
+	settings.ocean_noise.seed = settings.map_seed
 
-## placeholder functionality for placing units onto the map
-#func create_starting_units(count : int):
-	#var safety_count = 0 #Add safety counter in case no valid tiles
-	### Test pathfinder
-	#while count > 0 and safety_count < 50:
-		#var r_tile : Tile = WorldMap.map.pick_random()
-		#if r_tile.mesh_data.type == Tile.biome_type.Ocean or r_tile.occupier != null:
-			#safety_count += 1
-			#continue
-		#var unit : Unit = proto_unit.instantiate()
-		#add_child(unit)
-		#unit.team = Unit.TeamStatus.TEAM_2
-		#unit.update_team_color()
-		#unit.place_unit(r_tile.position, r_tile)
-		#count -= 1
 
 
 ## Start of world_generation

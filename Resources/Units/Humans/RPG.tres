@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://c58gwo1umdw5j"]
+
+[ext_resource type="Script" uid="uid://cgwwpc3udlsdg" path="res://scripts/Units/UnitData.gd" id="1_vbano"]
+
+[resource]
+script = ExtResource("1_vbano")
+unit_name = "RPG"
+max_health = 1
+movement_range = 3
+accuracy = 30
+damage = 2
+armor_pen = 3
+attacks = 10
+attack_range = 5
+armor = 3
+troops = 1
+point_cost = 5
+metadata/_custom_type_script = "uid://cgwwpc3udlsdg"

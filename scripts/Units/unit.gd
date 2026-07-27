@@ -1,44 +1,40 @@
 extends Node3D
 class_name Unit
 
-@export var unit_name : String
-@export var max_health: int
-@export var current_health: int
-@export var movement_range: int 
-@export var damage: int
-@export var attack_range: int
-@export var attacks: int
-@export var attacks_remaining: int
-@export var armor: int
-@export var armor_pen: int
-@export var movement_remaining: int = movement_range
-@export var point_cost: int
+var data : UnitData
 
-@export var model: PackedScene
+var current_health: int
+var movement_remaining: int
+var attacks_remaining: int
+var troops_remaining: int
 
 @export var has_moved: bool = false
 @export var has_attacked: bool = false
-var occupied_tile : Tile
-
 @export var team = TeamStatus.TEAM_1
+
+var occupied_tile : Tile
+var unit_id: int = -1
 
 enum TeamStatus {TEAM_1, TEAM_2}
 
-var unit_id: int = -1
 
 func _ready() -> void:
-	current_health = max_health
-	attacks_remaining = attacks
-	movement_remaining = movement_range
+	initialize()
 	
 	add_to_group("units")
 	
 	var mesh = $CSGCylinder3D
 	mesh.material = mesh.material.duplicate()
+	
 	$Healthbar/Sprite3D.texture = $Healthbar/SubViewport.get_texture()
-	$NameTag.text = unit_name + str(team)
+	$NameTag.text = data.unit_name + " " + str(team)
 	update_health()
 
+
+func initialize():
+	current_health = data.max_health
+	attacks_remaining = data.attacks
+	movement_remaining = data.movement_range
 
 
 ## Put this unit on a tile at position
@@ -66,9 +62,11 @@ func update_team_color():
 	elif team == TeamStatus.TEAM_1:
 		mesh.material.albedo_color = Color.BLUE
 
+
 ## Update healthbar
 func update_health():
 	$Healthbar/SubViewport/Control/ProgressBar.value = current_health
-	$Healthbar/SubViewport/Control/ProgressBar.max_value = max_health
-	$Healthbar/HealthNumber.text = "%d / %d" % [current_health, max_health]
-	
+	$Healthbar/SubViewport/Control/ProgressBar.max_value = data.max_health
+	$Healthbar/HealthNumber.text = "%d / %d" % [current_health, data.max_health]
+	if current_health <= 0:
+		queue_free()

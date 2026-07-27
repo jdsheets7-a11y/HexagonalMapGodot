@@ -4,8 +4,6 @@ extends Node3D
 @export var unit_cursor_scene : PackedScene
 @export var main_camera : Camera3D
 @export var p_finder : Pathfinder
-@export var proto_unit : PackedScene 
-@export var ranged_unit : PackedScene 
 var selected_tile : Node3D
 var selected_unit : Unit
 var unit_moves : Array[Node3D]
@@ -23,7 +21,6 @@ func _ready() -> void:
 		unit_cursor = unit_cursor_scene.instantiate()
 		add_child(unit_cursor)
 	deselect()
-
 
 
 func turn_start():
@@ -46,24 +43,36 @@ func _unhandled_input(event: InputEvent) -> void:
 		if Input.is_action_just_pressed("Click") and event.pressed:
 			match GameManager.game_state:
 				GameManager.GameState.DEPLOYMENT:
-					GameManager.request_deploy_unit("RANGED_UNIT", hit_object)
+					GameManager.request_deploy_unit("RPG_UNIT", hit_object)
 				GameManager.GameState.TEAM_1_TURN:
 					attempt_select(hit_object)
 		
 		elif Input.is_action_just_pressed("RightClick"):
-			match GameManager.game_state:
-				GameManager.GameState.TEAM_1_TURN:
-					if hit_object.is_in_group("units"):
-						GameManager.try_attack(selected_unit, hit_object, p_finder)
-					else:
-						if not p_finder.reachable_distances.has(hit_object):
-							print("Tile is not reachable")
-							return
-						
-						var distance = p_finder.reachable_distances[hit_object]
-						print("Distance: ", distance)
-						GameManager.request_move_unit(selected_unit, hit_object, distance)
-
+			if GameManager.game_state == GameManager.GameState.DEPLOYMENT:
+				# Add any right click deplyment logic here
+				
+				
+				return
+			else:
+				if hit_object.is_in_group("units"):
+					var attack_tiles = p_finder.find_attackable_tiles(
+						selected_unit.occupied_tile,
+						selected_unit.data.attack_range)
+					
+					if not attack_tiles.has(hit_object.occupied_tile):
+						print("Target out of range")
+						return
+					
+					GameManager.request_attack(selected_unit, hit_object)
+					
+				else:
+					if not p_finder.reachable_distances.has(hit_object):
+						print("Tile is not reachable")
+						return
+					
+					var distance = p_finder.reachable_distances[hit_object]
+					print("Distance: ", distance)
+					GameManager.request_move_unit(selected_unit, hit_object, distance)
 
 
 func raycast_at_mouse(origin, end) -> Node3D:
@@ -75,7 +84,6 @@ func raycast_at_mouse(origin, end) -> Node3D:
 		else:
 			deselect()
 			return null
-
 
 
 func attempt_select(hit):
@@ -91,7 +99,7 @@ func deselect():
 	unit_moves.clear()
 	selected_unit = null
 	p_finder.clear_highlight()
-
+	get_tree().current_scene.get_node("CameraParent/Camera3D/HUD/Inspector").visible = false
 
 
 func select_unit(unit):
@@ -104,6 +112,7 @@ func select_unit(unit):
 		highlight_unit(unit)
 		unit_moves = p_finder.find_reachable_tiles(unit.occupied_tile, unit.movement_remaining)
 		p_finder.highlight_tile(unit_moves)
+		get_tree().current_scene.get_node("CameraParent/Camera3D/HUD").update_inspector(selected_unit)
 
 
 func highlight_tile(tile):
