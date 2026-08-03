@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://cykhbvhn55tu"]
+
+[ext_resource type="Script" uid="uid://cgwwpc3udlsdg" path="res://scripts/Units/UnitData.gd" id="1_5deje"]
+
+[resource]
+script = ExtResource("1_5deje")
+unit_name = "Rippers"
+max_health = 1
+movement_range = 5
+accuracy = 30
+damage = 1
+attacks = 1
+attack_range = 1
+troops = 5
+point_cost = 5
+faction = 1
+INFANTRY = true
+metadata/_custom_type_script = "uid://cgwwpc3udlsdg"

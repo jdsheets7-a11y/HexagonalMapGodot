@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="TileMeshData" load_steps=3 format=3 uid="uid://bbnfty2f3t1g1"]
+[gd_resource type="Resource" script_class="TileMeshData" format=3 uid="uid://bbnfty2f3t1g1"]
 
 [ext_resource type="Script" uid="uid://rou5s5aylh75" path="res://scripts/WorldGen/tile_mesh_data.gd" id="1_odvnn"]
 [ext_resource type="PackedScene" uid="uid://dfv81u805a5s4" path="res://assets/Meshes/Tiles/roughhexagon.glb" id="1_t7ci4"]

@@ -2,8 +2,12 @@ extends Node
 class_name Pathfinder
 
 var neighbor_positions = WorldMap.HEXAGONAL_NEIGHBOR_DIRECTIONS
-@export var highlight_marker : PackedScene
-var markers = []
+@export var highlight_marker: PackedScene
+@export var attack_marker: PackedScene
+
+var movement_markers = []
+var attack_markers = []
+
 var reachable_distances = {}
 
 
@@ -107,22 +111,47 @@ func is_tile_valid(coords : Vector2) -> bool:
 
 
 func clear_highlight():
-	if markers and markers.size() > 0:
-		for m in markers:
+	if movement_markers and movement_markers.size() > 0:
+		for m in movement_markers:
 			m.visible = false
 
 
 func highlight_tile(selected_nodes: Array[Node3D]):
 	#Ensure correct marker count
-	var marker_diff = selected_nodes.size() - markers.size()
+	var marker_diff = selected_nodes.size() - movement_markers.size()
 	for m in range(marker_diff):
 		var new_marker = highlight_marker.instantiate()
 		add_child(new_marker)
-		markers.append(new_marker)
-	clear_highlight() # turn all markers invisible
+		movement_markers.append(new_marker)
+	clear_highlight() # turn all marker invisible
 	# Iterate over selected tiles
 	for i in range(selected_nodes.size()):
-		var marker = markers[i]
+		var marker = movement_markers[i]
 		var tile : Tile = selected_nodes[i]
+		marker.position = tile.position
+		marker.visible = true
+
+
+func clear_attack_highlight():
+	if attack_markers.size() > 0:
+		for m in attack_markers:
+			m.visible = false
+
+
+func highlight_attack_tiles(selected_nodes: Array[Node3D]):
+	# Ensure correct marker count
+	var marker_diff = selected_nodes.size() - attack_markers.size()
+	
+	for i in range(marker_diff):
+		var new_marker = attack_marker.instantiate()
+		add_child(new_marker)
+		attack_markers.append(new_marker)
+	
+	clear_attack_highlight()
+	
+	for i in range(selected_nodes.size()):
+		var marker = attack_markers[i]
+		var tile: Tile = selected_nodes[i]
+		
 		marker.position = tile.position
 		marker.visible = true

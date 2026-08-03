@@ -1,15 +1,18 @@
 extends Node3D
+class_name INTERACTION
 
-@export var tile_cursor_scene : PackedScene
-@export var unit_cursor_scene : PackedScene
-@export var main_camera : Camera3D
-@export var p_finder : Pathfinder
-var selected_tile : Node3D
-var selected_unit : Unit
-var unit_moves : Array[Node3D]
-var tile_cursor : Node3D
-var unit_cursor : Node3D
-var occupied_tile : Tile
+
+@export var tile_cursor_scene: PackedScene
+@export var unit_cursor_scene: PackedScene
+@export var main_camera: Camera3D
+@export var p_finder: Pathfinder
+var selected_tile: Node3D
+var selected_unit: Unit
+var unit_moves: Array[Node3D]
+var attack_tiles: Array[Node3D]
+var tile_cursor: Node3D
+var unit_cursor: Node3D
+var occupied_tile: Tile
 
 
 
@@ -44,8 +47,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			match GameManager.game_state:
 				GameManager.GameState.DEPLOYMENT:
 					GameManager.request_deploy_unit("RPG_UNIT", hit_object)
-				GameManager.GameState.TEAM_1_TURN:
+				_:
 					attempt_select(hit_object)
+				
 		
 		elif Input.is_action_just_pressed("RightClick"):
 			if GameManager.game_state == GameManager.GameState.DEPLOYMENT:
@@ -62,6 +66,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					if not attack_tiles.has(hit_object.occupied_tile):
 						print("Target out of range")
 						return
+						
 					
 					GameManager.request_attack(selected_unit, hit_object)
 					
@@ -99,6 +104,7 @@ func deselect():
 	unit_moves.clear()
 	selected_unit = null
 	p_finder.clear_highlight()
+	p_finder.clear_attack_highlight()
 	get_tree().current_scene.get_node("CameraParent/Camera3D/HUD/Inspector").visible = false
 
 
@@ -112,6 +118,8 @@ func select_unit(unit):
 		highlight_unit(unit)
 		unit_moves = p_finder.find_reachable_tiles(unit.occupied_tile, unit.movement_remaining)
 		p_finder.highlight_tile(unit_moves)
+		attack_tiles = p_finder.find_reachable_tiles(unit.occupied_tile, unit.data.attack_range)
+		p_finder.highlight_attack_tiles(attack_tiles)
 		get_tree().current_scene.get_node("CameraParent/Camera3D/HUD").update_inspector(selected_unit)
 
 

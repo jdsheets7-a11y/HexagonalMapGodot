@@ -1,7 +1,12 @@
 extends CanvasLayer
+class_name HUD
+
+@onready var val = $Inspector/HBoxContainer/Values
 
 
-@onready var vbox = $Inspector/VBoxContainer
+func _ready():
+	GameManager.hud = self
+
 
 func _process(_delta: float) -> void:
 	var team_text = ""
@@ -18,18 +23,21 @@ func _process(_delta: float) -> void:
 #Update the stat inspector
 func update_inspector(unit):
 	var data : UnitData
-	vbox.get_node("HBoxContainer/HealthVal").text = str(unit.current_health) \
+	val.get_node("HealthVal").text = str(unit.current_health) \
 	+ "/" + str(unit.data.max_health)
-	vbox.get_node("HBoxContainer2/ArmorVal").text = str(unit.data.armor)
-	vbox.get_node("HBoxContainer3/MovementVal").text = str(unit.movement_remaining) \
+	val.get_node("ArmorVal").text = str(unit.data.armor)
+	val.get_node("TroopsVal").text = str(unit.current_troops) \
+	+ "/" + str(unit.data.troops)
+	val.get_node("MovementVal").text = str(unit.movement_remaining) \
 	+ "/" + str(unit.data.movement_range)
-	vbox.get_node("HBoxContainer5/DamageVal").text = str(unit.data.damage)
-	vbox.get_node("HBoxContainer6/AccuracyVal").text = str(unit.data.accuracy)
-	vbox.get_node("HBoxContainer7/ArmorPenVal").text = str(unit.data.armor_pen)
-	vbox.get_node("HBoxContainer8/RangeVal").text = str(unit.data.attack_range)
-	vbox.get_node("HBoxContainer9/AttacksVal").text = str(unit.data.attacks)
+	val.get_node("DamageVal").text = str(unit.data.damage)
+	val.get_node("AccuracyVal").text = str(unit.data.accuracy)
+	val.get_node("ArmorPenVal").text = str(unit.data.armor_pen)
+	val.get_node("RangeVal").text = str(unit.data.attack_range)
+	val.get_node("AttacksVal").text = str(unit.data.attacks)
 	
 	$Inspector.visible = true
+
 
 
 
@@ -50,7 +58,17 @@ func _on_player_turn_pressed() -> void:
 	else:
 		GameManager.request_game_state.rpc_id(1, GameManager.GameState.TEAM_1_TURN)
 
-
-func _on_inspection_button_pressed() -> void:
-	$Inspection.visible = false
+func hit_display(hit: bool, wound: bool):
+	if hit and wound:
+		$HitIndicator.color = Color(0.129, 0.612, 0.102, 1.0)
+		$HitIndicator/HitLabel.text = "Hit!"
+	elif hit and !wound:
+		$HitIndicator.color = Color(0.682, 0.569, 0.0, 1.0)
+		$HitIndicator/HitLabel.text = "Blocked"
+	elif !hit:
+		$HitIndicator.color = Color(0.637, 0.118, 0.0, 1.0)
+		$HitIndicator/HitLabel.text = "Miss"
 	
+	$HitIndicator.visible = true
+	await get_tree().create_timer(1).timeout
+	$HitIndicator.visible = false

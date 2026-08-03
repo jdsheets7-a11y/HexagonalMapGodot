@@ -8,9 +8,9 @@ const EDGE_GAPFILL = preload("res://assets/Meshes/Tiles/edge_gapfill.glb")
 const TILE_SCRIPT = preload("res://scripts/WorldGen/tile.gd")
 
 # Variables
-var tile_materials : Array[Material]
-var settings : GenerationSettings
-var tile_parent : Node3D
+var tile_materials: Array[Material]
+var settings: GenerationSettings
+var tile_parent: Node3D
 
 
 func init_factory(in_settings : GenerationSettings, in_tile_parent : Node3D):

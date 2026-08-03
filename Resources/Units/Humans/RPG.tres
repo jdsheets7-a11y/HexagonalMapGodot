@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://c58gwo1umdw5j"]
 
+[ext_resource type="Texture2D" uid="uid://sf0ehutrdh55" path="res://Resources/Units/Humans/Human Textures/RPG.jpg" id="1_4xpxk"]
 [ext_resource type="Script" uid="uid://cgwwpc3udlsdg" path="res://scripts/Units/UnitData.gd" id="1_vbano"]
 
 [resource]
@@ -7,12 +8,13 @@ script = ExtResource("1_vbano")
 unit_name = "RPG"
 max_health = 1
 movement_range = 3
-accuracy = 30
+accuracy = 80
 damage = 2
-armor_pen = 3
-attacks = 10
+armor_pen = 1
+attacks = 1
 attack_range = 5
 armor = 3
-troops = 1
+troops = 4
 point_cost = 5
+icon = ExtResource("1_4xpxk")
 metadata/_custom_type_script = "uid://cgwwpc3udlsdg"

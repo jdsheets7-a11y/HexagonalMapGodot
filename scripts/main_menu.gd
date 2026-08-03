@@ -68,3 +68,7 @@ func _connected_to_server():
 func _connection_failed():
 	print("Connection failed")
 	$VBoxContainer/StatusLabel.text = "Connection failed"
+
+
+func _on_army_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/army_builder.tscn")

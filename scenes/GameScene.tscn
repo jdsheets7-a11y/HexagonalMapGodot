@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://bne86up5eweyd" path="res://scripts/WorldGen/object_placer.gd" id="9_p13dw"]
 [ext_resource type="Script" uid="uid://bdy82nphtcvus" path="res://scripts/pathfinder.gd" id="10_0b4my"]
 [ext_resource type="PackedScene" uid="uid://5hq7deseilvo" path="res://scenes/POI/VillageScene.tscn" id="10_hcqfn"]
+[ext_resource type="PackedScene" uid="uid://bmlm514w0iwkc" path="res://scenes/Cursors/attack_overlay.tscn" id="11_e8rlm"]
 [ext_resource type="PackedScene" uid="uid://xm2lgya4capr" path="res://scenes/Cursors/hexagon_cursor.tscn" id="11_rshvd"]
 [ext_resource type="PackedScene" uid="uid://bb3hit25an5ti" path="res://scenes/Cursors/path_overlay.tscn" id="12_0kgq4"]
 [ext_resource type="Script" uid="uid://8c4mygj6ghrg" path="res://scripts/interaction.gd" id="12_tt8b8"]
@@ -82,142 +83,163 @@ theme_override_font_sizes/font_size = 32
 text = "Turn: "
 
 [node name="Inspector" type="Panel" parent="CameraParent/Camera3D/HUD" unique_id=422401666]
-visible = false
-custom_minimum_size = Vector2(180, 310)
+z_index = 10
+custom_minimum_size = Vector2(180, 340)
 anchors_preset = -1
 anchor_right = 0.13700001
 anchor_bottom = 1.0
 offset_left = 10.0
 offset_top = 200.0
-offset_right = 34.639984
+offset_right = 64.639984
 offset_bottom = -210.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector" unique_id=933569044]
+[node name="HBoxContainer" type="HBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector" unique_id=1143309628]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 230.0
+offset_bottom = 309.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer" unique_id=36657933]
+[node name="Labels" type="VBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer" unique_id=680953106]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 
-[node name="Health" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer" unique_id=1108418798]
+[node name="Health" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=1108418798]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Health:"
 horizontal_alignment = 2
 
-[node name="HealthVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer" unique_id=827800883]
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer" unique_id=1037734681]
-layout_mode = 2
-
-[node name="Armor" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer2" unique_id=875746889]
+[node name="Armor" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=875746889]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Armor: "
 horizontal_alignment = 2
 
-[node name="ArmorVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer2" unique_id=291932362]
-custom_minimum_size = Vector2(50, 0)
+[node name="Troops" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=1491361622]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
+text = "Troops:"
+horizontal_alignment = 2
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer" unique_id=2139021878]
-layout_mode = 2
-
-[node name="Movement" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer3" unique_id=1063749820]
+[node name="Movement" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=1063749820]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Movement: "
 horizontal_alignment = 2
 
-[node name="MovementVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer3" unique_id=1979107697]
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-
-[node name="HBoxContainer5" type="HBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer" unique_id=642442437]
-layout_mode = 2
-
-[node name="Damage" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer5" unique_id=1205319038]
+[node name="Damage" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=1205319038]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Damage:"
 horizontal_alignment = 2
 
-[node name="DamageVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer5" unique_id=1039710935]
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-
-[node name="HBoxContainer6" type="HBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer" unique_id=415677476]
-layout_mode = 2
-
-[node name="Accuracy" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer6" unique_id=382625374]
+[node name="Accuracy" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=382625374]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Accuracy: "
 horizontal_alignment = 2
 
-[node name="AccuracyVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer6" unique_id=1373205109]
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-
-[node name="HBoxContainer7" type="HBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer" unique_id=1707555381]
-layout_mode = 2
-
-[node name="Armor Pen" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer7" unique_id=910991425]
+[node name="Armor Pen" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=910991425]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Armor Pen: "
 horizontal_alignment = 2
 
-[node name="ArmorPenVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer7" unique_id=1995455138]
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-
-[node name="HBoxContainer8" type="HBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer" unique_id=1420425190]
-layout_mode = 2
-
-[node name="Range" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer8" unique_id=422577467]
+[node name="Range" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=422577467]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Range: "
 horizontal_alignment = 2
 
-[node name="RangeVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer8" unique_id=1426645679]
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-
-[node name="HBoxContainer9" type="HBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer" unique_id=1785510486]
-layout_mode = 2
-
-[node name="Attacks" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer9" unique_id=1720152401]
+[node name="Attacks" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=1720152401]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "Attacks: "
 horizontal_alignment = 2
 
-[node name="AttacksVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer9" unique_id=1440277824]
+[node name="Values" type="VBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer" unique_id=192840689]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+
+[node name="HealthVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=827800883]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
+
+[node name="ArmorVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=291932362]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+
+[node name="TroopsVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1012046542]
+layout_mode = 2
+
+[node name="MovementVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1979107697]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+
+[node name="DamageVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1039710935]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+
+[node name="AccuracyVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1373205109]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+
+[node name="ArmorPenVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1995455138]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+
+[node name="RangeVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1426645679]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+
+[node name="AttacksVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1440277824]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+
+[node name="HitIndicator" type="ColorRect" parent="CameraParent/Camera3D/HUD" unique_id=1585710598]
+visible = false
+anchors_preset = -1
+anchor_left = 0.46100003
+anchor_right = 0.53900003
+anchor_bottom = 0.13900001
+offset_left = -0.08001709
+offset_top = 100.0
+offset_right = 0.079956055
+offset_bottom = 99.91999
+grow_vertical = 2
+color = Color(0.44705883, 0.44705883, 0.44705883, 1)
+
+[node name="HitLabel" type="Label" parent="CameraParent/Camera3D/HUD/HitIndicator" unique_id=628250860]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
 
 [node name="Scene" type="Node3D" parent="." unique_id=516166675]
 
@@ -236,6 +258,7 @@ sky_mode = 1
 layer = -100
 
 [node name="SpaceBG_img" type="TextureRect" parent="BGCanvasLayer" unique_id=1334977819]
+z_index = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -264,6 +287,7 @@ village = ExtResource("10_hcqfn")
 [node name="Pathfinder" type="Node" parent="Builder" unique_id=807976087]
 script = ExtResource("10_0b4my")
 highlight_marker = ExtResource("12_0kgq4")
+attack_marker = ExtResource("11_e8rlm")
 
 [node name="Interaction_tracker" type="Node3D" parent="Builder" unique_id=1053099130 node_paths=PackedStringArray("main_camera", "p_finder")]
 unique_name_in_owner = true

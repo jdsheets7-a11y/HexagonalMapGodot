@@ -1,0 +1,200 @@
+[gd_scene format=3 uid="uid://bwfgevyfcayb2"]
+
+[ext_resource type="Script" uid="uid://btpnta3u13ayo" path="res://scripts/army_builder.gd" id="1_ayooa"]
+[ext_resource type="Theme" uid="uid://b1q5dev6y6ysl" path="res://Themes/button.tres" id="1_cp7qe"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vdmbh"]
+bg_color = Color(0.4925657, 0.6214141, 0.69805676, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+
+[node name="ArmyBuilder" type="Control" unique_id=272311812]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -2.0
+offset_right = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ayooa")
+
+[node name="UnitPanel" type="Panel" parent="." unique_id=1535357791]
+custom_minimum_size = Vector2(950, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.74200004
+anchor_bottom = 1.0
+offset_right = 0.2399292
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UnitPanel" unique_id=704600989]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.91400003
+offset_bottom = -0.08001709
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Faction" type="Label" parent="UnitPanel/VBoxContainer" unique_id=1125607767]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Faction"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UnitPanel/VBoxContainer" unique_id=923128468]
+custom_minimum_size = Vector2(900, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GridContainer" type="GridContainer" parent="UnitPanel/VBoxContainer/ScrollContainer" unique_id=2107238110]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 4
+
+[node name="BackButton" type="Button" parent="UnitPanel" unique_id=1798660046]
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -61.0
+offset_right = 110.0
+offset_bottom = -10.0
+grow_vertical = 0
+theme = ExtResource("1_cp7qe")
+theme_override_font_sizes/font_size = 32
+text = "Back"
+
+[node name="Save" type="Button" parent="UnitPanel" unique_id=1735195982]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -61.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("1_cp7qe")
+theme_override_font_sizes/font_size = 32
+text = "Save"
+
+[node name="YourArmyPanel" type="Panel" parent="." unique_id=39685411]
+custom_minimum_size = Vector2(300, 720)
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="YourArmyPanel" unique_id=1920841557]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -164.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="YourArmyPanel/MarginContainer" unique_id=1834699001]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="YourArmyPanel/MarginContainer/VBoxContainer" unique_id=813336968]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 48
+text = "Your Army"
+horizontal_alignment = 1
+
+[node name="ItemList" type="ItemList" parent="YourArmyPanel/MarginContainer/VBoxContainer" unique_id=779126193]
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+
+[node name="ArmyPickerPanel" type="Panel" parent="." unique_id=1727589556]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vdmbh")
+
+[node name="Label" type="Label" parent="ArmyPickerPanel" unique_id=1163408417]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -211.5
+offset_top = 20.0
+offset_right = 211.5
+offset_bottom = 87.0
+grow_horizontal = 2
+pivot_offset = Vector2(0, 30)
+theme_override_font_sizes/font_size = 48
+text = "Choose your army"
+
+[node name="ArmyPicker" type="GridContainer" parent="ArmyPickerPanel" unique_id=1075370391]
+custom_minimum_size = Vector2(850, 500)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 4
+columns = 3
+
+[node name="Humans" type="Button" parent="ArmyPickerPanel/ArmyPicker" unique_id=1442689445]
+custom_minimum_size = Vector2(250, 50)
+layout_mode = 2
+theme = ExtResource("1_cp7qe")
+theme_override_font_sizes/font_size = 48
+text = "Humans"
+
+[node name="Robots" type="Button" parent="ArmyPickerPanel/ArmyPicker" unique_id=1394985058]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+theme = ExtResource("1_cp7qe")
+theme_override_font_sizes/font_size = 49
+text = "Robots"
+
+[node name="MainMenuButton" type="Button" parent="ArmyPickerPanel" unique_id=499628605]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 0
+offset_left = 12.0
+offset_top = 640.0
+offset_right = 312.0
+offset_bottom = 713.0
+theme = ExtResource("1_cp7qe")
+theme_override_font_sizes/font_size = 48
+text = "Main Menu
+"
+
+[connection signal="pressed" from="UnitPanel/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="UnitPanel/Save" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="ArmyPickerPanel/ArmyPicker/Humans" to="." method="_on_humans_pressed"]
+[connection signal="pressed" from="ArmyPickerPanel/ArmyPicker/Robots" to="." method="_on_robots_pressed"]
+[connection signal="pressed" from="ArmyPickerPanel/MainMenuButton" to="." method="_on_main_menu_button_pressed"]

@@ -11,10 +11,14 @@ var game_state = GameState.TEAM_1_TURN
 var current_team = Unit.TeamStatus.TEAM_1
 var local_team = Unit.TeamStatus
 var turn_counter = 1
+var can_attack: bool = true
 
 var next_unit_id: = 0
 var units_by_id = {}
 var unit_scene = preload("res://scenes/Units/prototype_unit.tscn")
+
+@onready var hud: HUD
+@onready var interaction: INTERACTION
 
 func generate_unit_id() -> int:
 	var id = next_unit_id
@@ -206,7 +210,9 @@ func request_attack(attacker: Unit, target: Unit):
 	if attacker.team == target.team:
 		print("Cannot attack friendly units")
 		return
-	
+	if can_attack == false:
+		print("Please wait")
+		return
 	
 	if multiplayer.is_server():
 		server_request_attack(attacker.unit_id, target.unit_id)
@@ -228,10 +234,8 @@ func server_request_attack(attacker_id: int, target_id: int):
 		return
 	
 	var sender_id = multiplayer.get_remote_sender_id()
-	
 	if sender_id == 0:
 		sender_id = 1
-	
 	var sender_team = peer_to_team.get(sender_id)
 	
 	if sender_team == null:
@@ -241,56 +245,78 @@ func server_request_attack(attacker_id: int, target_id: int):
 	if attacker.team != sender_team:
 		print("Cannot attack with enemy units")
 		return
-
+	
 	var accuracy = attacker.data.accuracy
 	var damage = attacker.data.damage
 	var pen = attacker.data.armor_pen
 	var armor = target.data.armor
-	var hit: bool = false
-	var wound: bool = false
+	var attack_results = []
 	
-	if accuracy >= randi_range(1, 100):
-		hit = true
-		if clamp(armor - pen, 1, armor) <= randi_range(1, 10):
-			wound = true
+	#Setup any attacking related Keywords
+	if attacker.data.INFANTRY:
+		attacker.attacks_remaining = attacker.troops_remaining * attacker.data.attacks
+	if attacker.data.CONTROL:
+		attacker.attacks_remaining = target.troops_remaining
+	
+	for i in range(attacker.attacks_remaining):
+		var hit: bool = accuracy >= randi_range(1, 100)
+		var wound = false
+		
+		if hit:
+			wound = clamp(armor - pen, 0, armor) <= randi_range(1, 10)
+		
+		attack_results.append({
+			"hit": hit,
+			"wound": wound,
+			"damage": damage})
+	
 	
 	attack_unit.rpc(
 		attacker_id,
 		target_id,
-		hit,
-		wound,
-		damage)
+		attack_results)
 
 
 @rpc("authority", "call_local", "reliable")
 func attack_unit(
 	attacker_id: int,
 	target_id: int,
-	hit: bool,
-	wound: bool,
-	damage: int):
+	attack_results):
 	
 	print("attack_unit called on peer ", multiplayer.get_unique_id())
+	
 	var attacker = get_unit_by_id(attacker_id)
 	var target = get_unit_by_id(target_id)
 	
 	if attacker == null or target == null:
 		return
 	
-	if hit:
-		print("Attack hit!")
-		if wound:
-			print("Attack successful!")
-			target.current_health -= damage
-			target.update_health()
-		else:
-			print("Attack blocked")
-	else:
-		print("Attack missed")
+	can_attack = false
 	
-	attacker.attacks_remaining -= 1
+	for result in attack_results:
+		
+		hud.hit_display(
+			result.hit,
+			result.wound)
+		
+		if result.hit:
+			if result.wound:
+				print("Attack hit!")
+				target.current_health -= result.damage
+				target.update_health()
+			else:
+				print("Attack blocked")
+		else:
+			print("Attack missed")
+		
+		await get_tree().create_timer(1.1).timeout
+	
+	
+	attacker.attacks_remaining -= attacker.data.attacks
 	print(attacker.data.unit_name, " attacks ", target.data.unit_name)
-
+	
+	await get_tree().create_timer(1.5).timeout
+	can_attack = true
 
 
 func get_unit_by_id(unit_id: int) -> Unit:

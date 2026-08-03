@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://bmlm514w0iwkc"]
+
+[ext_resource type="PackedScene" uid="uid://d3um0uo16mcbf" path="res://assets/Meshes/hex_overlay.glb" id="1_jwb6q"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a6cos"]
+transparency = 1
+albedo_color = Color(1, 0.34117648, 0.3254902, 0.39215687)
+
+[node name="AttackHexOverlay" unique_id=245611172 instance=ExtResource("1_jwb6q")]
+transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 0, 0, 0)
+
+[node name="Hex_Overlay" parent="." index="0" unique_id=788747158]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+material_override = SubResource("StandardMaterial3D_a6cos")

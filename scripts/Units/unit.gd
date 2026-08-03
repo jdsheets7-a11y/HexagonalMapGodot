@@ -27,7 +27,7 @@ func _ready() -> void:
 	mesh.material = mesh.material.duplicate()
 	
 	$Healthbar/Sprite3D.texture = $Healthbar/SubViewport.get_texture()
-	$NameTag.text = data.unit_name + " " + str(team)
+	$NameTag.text = data.unit_name
 	update_health()
 
 
@@ -35,6 +35,7 @@ func initialize():
 	current_health = data.max_health
 	attacks_remaining = data.attacks
 	movement_remaining = data.movement_range
+	troops_remaining = data.troops
 
 
 ## Put this unit on a tile at position

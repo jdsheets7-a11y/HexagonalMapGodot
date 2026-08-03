@@ -6,7 +6,7 @@ extends Node
 @export var object_placer : ObjectPlacer
 @export var tile_parent : Node3D
 
-# Test-only!
+
 @export var pfinder : Pathfinder
 @export var proto_unit : PackedScene
 

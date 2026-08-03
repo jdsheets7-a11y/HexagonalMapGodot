@@ -13,9 +13,17 @@ class_name UnitData
 @export var armor: int
 @export var troops: int
 @export var point_cost: int
-
 @export var model: PackedScene
+@export var icon: Texture2D
+
+
+enum Faction {
+	HUMAN,
+	ROBOT
+}
+
+@export var faction = Faction.HUMAN
 
 #Tags
-@export var infantry: bool
-@export var control: bool
+@export var INFANTRY: bool
+@export var CONTROL: bool
