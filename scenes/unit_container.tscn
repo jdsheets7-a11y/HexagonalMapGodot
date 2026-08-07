@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://3d0d5s44jrih"]
 
-[ext_resource type="Script" uid="uid://db3hcet27a4xi" path="res://scripts/units/unit_container.gd" id="1_ksycj"]
+[ext_resource type="Script" uid="uid://db3hcet27a4xi" path="res://scripts/Units/unit_container.gd" id="1_ksycj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ksycj"]
 bg_color = Color(0.6, 0.6, 0.6, 0)

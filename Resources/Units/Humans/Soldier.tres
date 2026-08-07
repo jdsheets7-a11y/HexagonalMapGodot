@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://cuvc6mp3sspek"]
+
+[ext_resource type="Script" uid="uid://cgwwpc3udlsdg" path="res://scripts/Units/UnitData.gd" id="1_xpe37"]
+
+[resource]
+script = ExtResource("1_xpe37")
+unit_name = "Soldiers"
+max_health = 1
+movement_range = 3
+accuracy = 50
+damage = 1
+armor_pen = 1
+attack_range = 3
+armor = 3
+troops = 3
+point_cost = 5
+INFANTRY = true
+metadata/_custom_type_script = "uid://cgwwpc3udlsdg"

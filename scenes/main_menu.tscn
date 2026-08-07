@@ -12,12 +12,22 @@ grow_vertical = 2
 script = ExtResource("1_l6cm7")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1193366529]
-layout_mode = 0
-offset_right = 200.0
-offset_bottom = 100.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -102.0
+offset_top = -64.0
+offset_right = 102.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="HostButton" type="Button" parent="VBoxContainer" unique_id=113223272]
 layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "Host Game"
 
 [node name="HBoxContainer" type="BoxContainer" parent="VBoxContainer" unique_id=365629584]
@@ -27,19 +37,23 @@ size_flags_vertical = 3
 [node name="IPAddress" type="LineEdit" parent="VBoxContainer/HBoxContainer" unique_id=1819604822]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "127.0.0.1"
 
 [node name="JoinButton" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=579202088]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "Join Game"
 
 [node name="StatusLabel" type="Label" parent="VBoxContainer" unique_id=1350764732]
 layout_mode = 2
+theme_override_font_sizes/font_size = 32
 text = "Disconnected"
 
 [node name="ArmyButton" type="Button" parent="VBoxContainer" unique_id=1040488289]
 layout_mode = 2
+theme_override_font_sizes/font_size = 48
 text = "Army Builder"
 
 [connection signal="pressed" from="VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]

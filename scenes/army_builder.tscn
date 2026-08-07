@@ -12,35 +12,32 @@ corner_radius_bottom_left = 25
 
 [node name="ArmyBuilder" type="Control" unique_id=272311812]
 layout_mode = 3
-anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -2.0
-offset_right = -2.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ayooa")
 
 [node name="UnitPanel" type="Panel" parent="." unique_id=1535357791]
-custom_minimum_size = Vector2(950, 0)
+custom_minimum_size = Vector2(900, 720)
 layout_mode = 1
 anchors_preset = -1
-anchor_right = 0.74200004
+anchor_right = 0.703
 anchor_bottom = 1.0
-offset_right = 0.2399292
+offset_right = 0.15997314
+offset_bottom = -720.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UnitPanel" unique_id=704600989]
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.91400003
-offset_bottom = -0.08001709
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Faction" type="Label" parent="UnitPanel/VBoxContainer" unique_id=1125607767]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 42
 text = "Faction"
 horizontal_alignment = 1
 
@@ -48,11 +45,16 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(900, 0)
 layout_mode = 2
 size_flags_vertical = 3
+offset_transform_enabled = true
+offset_transform_position = Vector2(20, 0)
 
 [node name="GridContainer" type="GridContainer" parent="UnitPanel/VBoxContainer/ScrollContainer" unique_id=2107238110]
+custom_maximum_size = Vector2(900, -1)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
 columns = 4
 
 [node name="BackButton" type="Button" parent="UnitPanel" unique_id=1798660046]
@@ -89,7 +91,7 @@ theme_override_font_sizes/font_size = 32
 text = "Save"
 
 [node name="YourArmyPanel" type="Panel" parent="." unique_id=39685411]
-custom_minimum_size = Vector2(300, 720)
+custom_minimum_size = Vector2(360, 720)
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
@@ -101,32 +103,41 @@ grow_vertical = 2
 [node name="MarginContainer" type="MarginContainer" parent="YourArmyPanel" unique_id=1920841557]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 1
-anchors_preset = 11
-anchor_left = 1.0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -164.0
-grow_horizontal = 0
+grow_horizontal = 2
 grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="YourArmyPanel/MarginContainer" unique_id=1834699001]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="YourArmyPanel/MarginContainer/VBoxContainer" unique_id=813336968]
+[node name="HBoxContainer" type="HBoxContainer" parent="YourArmyPanel/MarginContainer/VBoxContainer" unique_id=353715999]
+layout_mode = 2
+
+[node name="YourArmy" type="Label" parent="YourArmyPanel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=813336968]
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_font_sizes/font_size = 48
-text = "Your Army"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 42
+text = "  Your Army"
+
+[node name="PointCount" type="Label" parent="YourArmyPanel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=717440247]
+layout_mode = 2
+size_flags_horizontal = 3
+offset_transform_enabled = true
+offset_transform_position = Vector2(-20, 0)
+theme_override_font_sizes/font_size = 42
+text = "0"
+horizontal_alignment = 2
 
 [node name="ItemList" type="ItemList" parent="YourArmyPanel/MarginContainer/VBoxContainer" unique_id=779126193]
 custom_minimum_size = Vector2(0, 76)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 32
+allow_reselect = true
 
 [node name="ArmyPickerPanel" type="Panel" parent="." unique_id=1727589556]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
