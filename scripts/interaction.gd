@@ -46,7 +46,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		if Input.is_action_just_pressed("Click") and event.pressed:
 			match GameManager.game_state:
 				GameManager.GameState.DEPLOYMENT:
-					GameManager.request_deploy_unit("RPG_UNIT", hit_object)
+					if HUDstate.selected_unit:
+						if hit_object is Tile:
+							GameManager.request_deploy_unit(HUDstate.selected_unit, hit_object)
+						else:
+							print("Tile occupied")
+					else:
+						print("no unit selected")
 				_:
 					attempt_select(hit_object)
 				

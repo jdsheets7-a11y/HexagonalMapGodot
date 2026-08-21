@@ -24,6 +24,7 @@ config/icon="res://icon.svg"
 WorldMap="*res://scripts/WorldGen/world.gd"
 GameManager="*uid://dkveaxhndx1n7"
 UnitDatabase="*uid://c7e4giauw0kh6"
+HUDstate="*uid://cambxin408gn8"
 
 [display]
 

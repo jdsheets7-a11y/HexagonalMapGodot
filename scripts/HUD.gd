@@ -2,13 +2,10 @@ extends CanvasLayer
 class_name HUD
 
 @onready var val = $Inspector/HBoxContainer/Values
-@onready var army = $YourArmyPanel/VBoxContainer/ArmyList
-
-
+@onready var army = $DeployPanel/VBoxContainer/ArmyList
 
 
 func _ready():
-	GameManager.hud = self
 	build_army()
 	army.item_selected.connect(_on_army_item_selected)
 
@@ -86,5 +83,9 @@ func build_army():
 
 
 func _on_army_item_selected(index: int):
-	var unit: UnitData = GameManager.army_list[index]
-	print(unit.unit_name + " selected")
+	HUDstate.selected_unit = GameManager.army_list[index]
+	print(HUDstate.selected_unit.unit_name + " selected")
+
+
+func remove_unit(unit: UnitData):
+	army.remove_item(unit.unit_name)

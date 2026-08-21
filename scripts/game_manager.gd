@@ -39,27 +39,32 @@ func send_world_seed(seed: int):
 
 
 # Deployment logic
-func request_deploy_unit(unit_type: String, tile: Tile):
+func request_deploy_unit(
+	unit_type: UnitData,
+	tile: Tile
+):
 	print("Request deploy called. Local team: ", local_team)
 	if tile == null:
 		return
-		
+	
+	var unit_path: String = unit_type.resource_path
+	
 	if multiplayer.is_server():
 		request_deploy_unit_rpc(
-			unit_type,
+			unit_path,
 			tile.pos_data.grid_position,
 		)
 	else:
 		request_deploy_unit_rpc.rpc_id(
 			1,
-			unit_type,
+			unit_path,
 			tile.pos_data.grid_position,
 		)
 
 
 @rpc("any_peer", "reliable")
 func request_deploy_unit_rpc(
-	unit_type: String,
+	unit_path: String,
 	grid_position: Vector2
 ):
 	print("Server received deploy request")
@@ -68,7 +73,6 @@ func request_deploy_unit_rpc(
 		return
 	
 	var sender_id = multiplayer.get_remote_sender_id()
-	
 	if sender_id == 0:
 		sender_id = 1
 	
@@ -88,22 +92,21 @@ func request_deploy_unit_rpc(
 		return
 	
 	spawn_unit.rpc(
-		unit_type,
+		unit_path,
 		grid_position,
 		team
 	)
 
+
 @rpc("authority", "call_local", "reliable")
-func spawn_unit(unit_type: String, grid_position: Vector2, team: Unit.TeamStatus):
-	@warning_ignore("static_called_on_instance")
-	var unit_to_spawn = UnitDatabase.get_unit(unit_type)
-	
-	if unit_to_spawn == null:
-		print("Invalid unit type")
-		return
-	
+func spawn_unit(
+	unit_path: String,
+	grid_position: Vector2,
+	team: Unit.TeamStatus
+):
+	var unit_type: UnitData = load(unit_path)
 	var unit: Unit = UnitDatabase.UNIT_SCENE.instantiate()
-	unit.data = unit_to_spawn
+	unit.data = unit_type
 	
 	unit.unit_id = generate_unit_id()
 	get_tree().current_scene.add_child(unit)
@@ -115,7 +118,7 @@ func spawn_unit(unit_type: String, grid_position: Vector2, team: Unit.TeamStatus
 	
 	var tile: Tile = WorldMap.map_as_dict[grid_position]
 	unit.place_unit(tile.position, tile)
-
+	hud.remove_unit(unit_type)
 
 
 # Movment logic
@@ -393,6 +396,7 @@ func start_game():
 		local_team = Unit.TeamStatus.TEAM_2
 		print("Assigned Team 2")
 	
+	game_state = GameState.DEPLOYMENT 
 	get_tree().change_scene_to_file("res://scenes/GameScene.tscn")
 
 
