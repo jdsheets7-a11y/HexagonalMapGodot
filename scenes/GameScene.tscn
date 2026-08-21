@@ -15,6 +15,8 @@
 [ext_resource type="Script" uid="uid://8c4mygj6ghrg" path="res://scripts/interaction.gd" id="12_tt8b8"]
 [ext_resource type="PackedScene" uid="uid://cqxjxq25t6wuy" path="res://scenes/Cursors/unit_cursor.tscn" id="13_ydfkh"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mf2rh"]
+
 [sub_resource type="Environment" id="Environment_f2ci6"]
 background_mode = 3
 background_color = Color(0, 0.214146, 0.346416, 1)
@@ -50,6 +52,7 @@ rot = Vector2(-25, -80)
 sun = NodePath("../../Scene/DirectionalLight3D")
 
 [node name="HUD" type="CanvasLayer" parent="CameraParent/Camera3D" unique_id=865497326]
+layer = 2
 script = ExtResource("2_w22tq")
 
 [node name="End Turn" type="Button" parent="CameraParent/Camera3D/HUD" unique_id=723344998]
@@ -81,6 +84,35 @@ offset_right = 1089.0
 offset_bottom = 65.0
 theme_override_font_sizes/font_size = 32
 text = "Turn: "
+
+[node name="YourArmyPanel" type="Panel" parent="CameraParent/Camera3D/HUD" unique_id=1605648117]
+custom_minimum_size = Vector2(320, 720)
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mf2rh")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CameraParent/Camera3D/HUD/YourArmyPanel" unique_id=519819649]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="CameraParent/Camera3D/HUD/YourArmyPanel/VBoxContainer" unique_id=758887177]
+layout_mode = 2
+theme_override_font_sizes/font_size = 42
+text = "Your Army"
+horizontal_alignment = 1
+
+[node name="ArmyList" type="ItemList" parent="CameraParent/Camera3D/HUD/YourArmyPanel/VBoxContainer" unique_id=1386209921]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
 
 [node name="Inspector" type="Panel" parent="CameraParent/Camera3D/HUD" unique_id=422401666]
 z_index = 10
@@ -254,11 +286,11 @@ sky_mode = 1
 
 [node name="TileParent" type="Node3D" parent="Scene" unique_id=1928136653]
 
-[node name="BGCanvasLayer" type="CanvasLayer" parent="." unique_id=232004319]
+[node name="Background" type="CanvasLayer" parent="." unique_id=1103499080]
 layer = -100
 
-[node name="SpaceBG_img" type="TextureRect" parent="BGCanvasLayer" unique_id=1334977819]
-z_index = -1
+[node name="SpaceBG_img" type="TextureRect" parent="Background" unique_id=1334977819]
+z_index = -100
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

@@ -12,6 +12,7 @@ var current_team = Unit.TeamStatus.TEAM_1
 var local_team = Unit.TeamStatus
 var turn_counter = 1
 var can_attack: bool = true
+var army_list: Array[UnitData] = []
 
 var next_unit_id: = 0
 var units_by_id = {}

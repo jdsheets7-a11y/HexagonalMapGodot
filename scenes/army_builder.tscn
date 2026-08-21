@@ -12,6 +12,7 @@ corner_radius_bottom_left = 25
 
 [node name="ArmyBuilder" type="Control" unique_id=272311812]
 layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -100,28 +101,21 @@ anchor_bottom = 1.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="YourArmyPanel" unique_id=1920841557]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="VBoxContainer" type="VBoxContainer" parent="YourArmyPanel" unique_id=1834699001]
+layout_mode = 0
+offset_right = 360.0
+offset_bottom = 720.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="YourArmyPanel/MarginContainer" unique_id=1834699001]
+[node name="HBoxContainer" type="HBoxContainer" parent="YourArmyPanel/VBoxContainer" unique_id=353715999]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="YourArmyPanel/MarginContainer/VBoxContainer" unique_id=353715999]
-layout_mode = 2
-
-[node name="YourArmy" type="Label" parent="YourArmyPanel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=813336968]
+[node name="YourArmy" type="Label" parent="YourArmyPanel/VBoxContainer/HBoxContainer" unique_id=813336968]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 42
 text = "  Your Army"
 
-[node name="PointCount" type="Label" parent="YourArmyPanel/MarginContainer/VBoxContainer/HBoxContainer" unique_id=717440247]
+[node name="PointCount" type="Label" parent="YourArmyPanel/VBoxContainer/HBoxContainer" unique_id=717440247]
 layout_mode = 2
 size_flags_horizontal = 3
 offset_transform_enabled = true
@@ -130,7 +124,7 @@ theme_override_font_sizes/font_size = 42
 text = "0"
 horizontal_alignment = 2
 
-[node name="ItemList" type="ItemList" parent="YourArmyPanel/MarginContainer/VBoxContainer" unique_id=779126193]
+[node name="ArmyList" type="ItemList" parent="YourArmyPanel/VBoxContainer" unique_id=779126193]
 custom_minimum_size = Vector2(0, 76)
 layout_mode = 2
 size_flags_vertical = 3

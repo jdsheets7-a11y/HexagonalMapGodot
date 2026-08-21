@@ -72,3 +72,8 @@ func _connection_failed():
 
 func _on_army_button_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/army_builder.tscn")
+
+
+func _on_start_button_pressed() -> void:
+	print("starting...")
+	GameManager.start_game.rpc()

@@ -56,6 +56,12 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 48
 text = "Army Builder"
 
+[node name="StartButton" type="Button" parent="VBoxContainer" unique_id=1487933051]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Start Game"
+
 [connection signal="pressed" from="VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/ArmyButton" to="." method="_on_army_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]

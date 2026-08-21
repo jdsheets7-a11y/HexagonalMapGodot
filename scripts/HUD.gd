@@ -2,10 +2,16 @@ extends CanvasLayer
 class_name HUD
 
 @onready var val = $Inspector/HBoxContainer/Values
+@onready var army = $YourArmyPanel/VBoxContainer/ArmyList
+
+
 
 
 func _ready():
 	GameManager.hud = self
+	build_army()
+	army.item_selected.connect(_on_army_item_selected)
+
 
 
 func _process(_delta: float) -> void:
@@ -40,7 +46,6 @@ func update_inspector(unit):
 
 
 
-
 func _on_end_turn_pressed() -> void:
 	GameManager.end_turn()
 
@@ -58,6 +63,7 @@ func _on_player_turn_pressed() -> void:
 	else:
 		GameManager.request_game_state.rpc_id(1, GameManager.GameState.TEAM_1_TURN)
 
+
 func hit_display(hit: bool, wound: bool):
 	if hit and wound:
 		$HitIndicator.color = Color(0.129, 0.612, 0.102, 1.0)
@@ -72,3 +78,13 @@ func hit_display(hit: bool, wound: bool):
 	$HitIndicator.visible = true
 	await get_tree().create_timer(1).timeout
 	$HitIndicator.visible = false
+
+
+func build_army():
+	for unit in GameManager.army_list:
+		army.add_item(unit.unit_name)
+
+
+func _on_army_item_selected(index: int):
+	var unit: UnitData = GameManager.army_list[index]
+	print(unit.unit_name + " selected")
