@@ -6,6 +6,7 @@ class_name HUD
 
 
 func _ready():
+	GameManager.hud = self
 	build_army()
 	army.item_selected.connect(_on_army_item_selected)
 
@@ -84,8 +85,9 @@ func build_army():
 
 func _on_army_item_selected(index: int):
 	HUDstate.selected_unit = GameManager.army_list[index]
+	HUDstate.selected_unit_index = index
 	print(HUDstate.selected_unit.unit_name + " selected")
 
 
 func remove_unit(unit: UnitData):
-	army.remove_item(unit.unit_name)
+	army.remove_item(HUDstate.selected_unit_index)

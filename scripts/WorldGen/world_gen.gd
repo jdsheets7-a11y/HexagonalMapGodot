@@ -5,9 +5,9 @@ extends Node
 @export_category("Dependencies")
 @export var object_placer : ObjectPlacer
 @export var tile_parent : Node3D
+@export var p_finder: PATHFINDER
 
 
-@export var pfinder : Pathfinder
 @export var proto_unit : PackedScene
 
 
@@ -16,7 +16,11 @@ func _ready() -> void:
 	if multiplayer.is_server():
 		init_seed()
 		GameManager.send_world_seed.rpc(settings.map_seed)
+		print("Ready to generate world")
 		generate_world()
+		print("World generated!")
+		GameManager.setup_deployment_zone()
+		show_deployment_zone()
 
 
 
@@ -24,6 +28,8 @@ func start_generation(seed: int):
 	settings.map_seed = seed
 	init_seed()
 	generate_world()
+	GameManager.setup_deployment_zone()
+	show_deployment_zone()
 
 
 # Randomize if no seed has been set
@@ -74,3 +80,12 @@ func get_placeable_tiles() -> Array[Tile]:
 		placeable_tiles.append(tile)
 	print(str(placeable_tiles.size()) + " placeable tiles")
 	return placeable_tiles
+
+
+func show_deployment_zone():
+	print("SHOW DEPLOYMENT local_team: ", GameManager.local_team)
+	
+	var deployment_tiles = GameManager.get_deployment_tiles(GameManager.local_team)
+	print("Deployment tiles: ", deployment_tiles.size())
+	
+	p_finder.highlight_deployment_tiles(deployment_tiles)

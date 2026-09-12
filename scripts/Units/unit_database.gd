@@ -5,32 +5,34 @@ const UNIT_SCENE = preload("res://scenes/Units/prototype_unit.tscn")
 
 
 #Humans
-const RPG_UNIT = preload("res://Resources/Units/Humans/RPG.tres")
-const TANK_UNIT  = preload("res://Resources/Units/Humans/Tank.tres")
-const SOLDIER_UNIT = preload("res://Resources/Units/Humans/Soldier.tres")
-const FLAMETHROWER_UNIT = preload("res://Resources/Units/Humans/Flamethrower.tres")
-const SNIPER_UNIT = preload("res://Resources/Units/Humans/Sniper.tres")
+const RPG = preload("res://Resources/Units/Humans/RPG.tres")
+const TANK  = preload("res://Resources/Units/Humans/Tank.tres")
+const SOLDIER = preload("res://Resources/Units/Humans/Soldier.tres")
+const FLAMETHROWER = preload("res://Resources/Units/Humans/Flamethrower.tres")
+const SNIPER = preload("res://Resources/Units/Humans/Sniper.tres")
 
 
 #Robots
-const RIPPERS_UNIT = preload("res://Resources/Units/Robots/Rippers.tres")
-
+const RIPPERS = preload("res://Resources/Units/Robots/Rippers.tres")
+const LAZER_MECH = preload("res://Resources/Units/Robots/Lazer_Mech.tres")
+const DESTROYER = preload("res://Resources/Units/Robots/Destroyer.tres")
 
 
 static var unit_catalog := {
 	#Humans
-	"RPG_UNIT": RPG_UNIT,
-	"TANK_UNIT": TANK_UNIT,
-	"FLAMETHROWER_UNIT": FLAMETHROWER_UNIT,
-	"SOLDIER_UNIT": SOLDIER_UNIT,
-	"SNIPER_UNIT": SNIPER_UNIT,
+	"RPG": RPG,
+	"TANK": TANK,
+	"FLAMETHROWER": FLAMETHROWER,
+	"SOLDIER": SOLDIER,
+	"SNIPER": SNIPER,
 	
 	
 	#Robots
-	"RIPPERS_UNIT": RIPPERS_UNIT
+	"RIPPERS": RIPPERS,
+	"LAZER_MECH": LAZER_MECH,
+	"DESTROYER": DESTROYER
 }
 
-signal selected_unit(data)
 
 static func get_unit(unit_type: String) -> UnitData:
 	return unit_catalog.get(unit_type)

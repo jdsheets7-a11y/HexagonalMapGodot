@@ -1,14 +1,18 @@
 extends Node
-class_name Pathfinder
+class_name PATHFINDER
 
 var neighbor_positions = WorldMap.HEXAGONAL_NEIGHBOR_DIRECTIONS
+
 @export var highlight_marker: PackedScene
 @export var attack_marker: PackedScene
+@export var deploy_marker: PackedScene
 
 var movement_markers = []
 var attack_markers = []
+var deploy_markers = []
 
 var reachable_distances = {}
+
 
 
 func find_reachable_tiles(start : Tile, movement_range: int) -> Array[Node3D]:
@@ -98,6 +102,7 @@ func find_attackable_tiles(start : Tile, attack_range: int) -> Array[Node3D]:
 		
 	return attackable_tiles
 
+
 func is_tile_valid(coords : Vector2) -> bool:
 	var valid = false
 	if not WorldMap.map_as_dict.has(coords):
@@ -110,10 +115,27 @@ func is_tile_valid(coords : Vector2) -> bool:
 	return valid
 
 
-func clear_highlight():
-	if movement_markers and movement_markers.size() > 0:
-		for m in movement_markers:
-			m.visible = false
+func highlight_deployment_tiles(selected_nodes: Array[Tile]):
+	var marker_diff = selected_nodes.size() - deploy_markers.size()
+	
+	for i in range(marker_diff):
+		var new_marker = deploy_marker.instantiate()
+		add_child(new_marker)
+		deploy_markers.append(new_marker)
+	
+	clear_deployment_highlight()
+	
+	for i in range(selected_nodes.size()):
+		var marker = deploy_markers[i]
+		var tile: Tile = selected_nodes[i]
+		
+		marker.position = tile.position
+		marker.visible = true
+
+
+func clear_deployment_highlight():
+	for marker in deploy_markers:
+		marker.visible = false
 
 
 func highlight_tile(selected_nodes: Array[Node3D]):
@@ -132,9 +154,9 @@ func highlight_tile(selected_nodes: Array[Node3D]):
 		marker.visible = true
 
 
-func clear_attack_highlight():
-	if attack_markers.size() > 0:
-		for m in attack_markers:
+func clear_highlight():
+	if movement_markers and movement_markers.size() > 0:
+		for m in movement_markers:
 			m.visible = false
 
 
@@ -155,3 +177,9 @@ func highlight_attack_tiles(selected_nodes: Array[Node3D]):
 		
 		marker.position = tile.position
 		marker.visible = true
+
+
+func clear_attack_highlight():
+	if attack_markers.size() > 0:
+		for m in attack_markers:
+			m.visible = false

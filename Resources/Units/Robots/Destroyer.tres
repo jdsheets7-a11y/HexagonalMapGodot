@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://0t4t44klh2r5"]
+
+[ext_resource type="Script" uid="uid://cgwwpc3udlsdg" path="res://scripts/Units/UnitData.gd" id="1_7vp70"]
+
+[resource]
+script = ExtResource("1_7vp70")
+unit_name = "Destroyer"
+max_health = 4
+movement_range = 3
+accuracy = 60
+damage = 1
+armor_pen = 1
+attacks = 5
+attack_range = 1
+armor = 7
+troops = 1
+point_cost = 20
+faction = 1
+metadata/_custom_type_script = "uid://cgwwpc3udlsdg"

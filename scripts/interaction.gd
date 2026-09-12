@@ -5,7 +5,7 @@ class_name INTERACTION
 @export var tile_cursor_scene: PackedScene
 @export var unit_cursor_scene: PackedScene
 @export var main_camera: Camera3D
-@export var p_finder: Pathfinder
+@export var p_finder: PATHFINDER
 var selected_tile: Node3D
 var selected_unit: Unit
 var unit_moves: Array[Node3D]
@@ -13,7 +13,6 @@ var attack_tiles: Array[Node3D]
 var tile_cursor: Node3D
 var unit_cursor: Node3D
 var occupied_tile: Tile
-
 
 
 func _ready() -> void:
@@ -167,3 +166,8 @@ func hide_cursor(cursor : Node3D):
 	if cursor:
 		move_cursor(cursor, Vector3.ZERO, -10)
 		cursor.visible = false
+
+
+func show_deployment_zone():
+	var deployment_tiles = GameManager.get_deployment_tiles(GameManager.local_team)
+	p_finder.highlight_deployment_tiles(deployment_tiles)

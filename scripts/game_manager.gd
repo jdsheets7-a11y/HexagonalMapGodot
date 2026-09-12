@@ -6,6 +6,7 @@ enum GameState {
 	TEAM_2_TURN
 }
 
+
 var peer_to_team: Dictionary = {}
 var game_state = GameState.TEAM_1_TURN
 var current_team = Unit.TeamStatus.TEAM_1
@@ -18,8 +19,63 @@ var next_unit_id: = 0
 var units_by_id = {}
 var unit_scene = preload("res://scenes/Units/prototype_unit.tscn")
 
+var deployment_rows: Vector2
+const DEPLOYMENT_DEPTH := 5
+
 @onready var hud: HUD
 @onready var interaction: INTERACTION
+
+
+
+
+func setup_deployment_zone():
+	deployment_rows = get_deployment_rows()
+	print("Deployment rows: ", deployment_rows)
+	
+	#for tile in WorldMap.map_as_dict.values():
+		#if is_deployment_tile(tile, Unit.TeamStatus.TEAM_2):
+			#print("TEAM 2 deployment: ", tile.pos_data.grid_position.y)
+
+
+func get_deployment_rows() -> Vector2:
+	var min_row = INF
+	var max_row = -INF
+	
+	for tile in WorldMap.map_as_dict.values():
+		var row = tile.pos_data.grid_position.y
+		min_row = min(min_row, row)
+		max_row = max(max_row, row)
+	
+	return Vector2(min_row, max_row)
+
+
+func get_deployment_tiles(team: Unit.TeamStatus) -> Array[Tile]:
+	var deployment_tiles: Array[Tile] = []
+	
+	print("GET DEPLOYMENT")
+	print("Team: ", team)
+	print("Deployment rows: ", deployment_rows)
+	print("Depth: ", DEPLOYMENT_DEPTH)
+	
+	for tile in WorldMap.map_as_dict.values():
+		if is_deployment_tile(tile, team):
+			deployment_tiles.append(tile)
+	
+	return deployment_tiles
+
+
+func is_deployment_tile(tile: Tile, team: Unit.TeamStatus) -> bool:
+	var row = tile.pos_data.grid_position.y
+	
+	if team == Unit.TeamStatus.TEAM_1:
+		return row <= deployment_rows.x + DEPLOYMENT_DEPTH - 1
+		
+	if team == Unit.TeamStatus.TEAM_2:
+		return row >= deployment_rows.y - DEPLOYMENT_DEPTH + 1
+	
+	return false
+
+
 
 func generate_unit_id() -> int:
 	var id = next_unit_id
@@ -45,6 +101,13 @@ func request_deploy_unit(
 ):
 	print("Request deploy called. Local team: ", local_team)
 	if tile == null:
+		return
+	
+	if game_state != GameState.DEPLOYMENT:
+		return
+	
+	if not is_deployment_tile(tile, local_team):
+		print("Tile is outside deployment zone")
 		return
 	
 	var unit_path: String = unit_type.resource_path
@@ -119,6 +182,7 @@ func spawn_unit(
 	var tile: Tile = WorldMap.map_as_dict[grid_position]
 	unit.place_unit(tile.position, tile)
 	hud.remove_unit(unit_type)
+	HUDstate.selected_unit = null
 
 
 # Movment logic
@@ -391,12 +455,14 @@ func set_turn(
 func start_game():
 	if multiplayer.is_server():
 		local_team = Unit.TeamStatus.TEAM_1
-		print("Assigned Team 1")
+		print("Assigned Team 1, local_team = ", local_team)
 	else:
 		local_team = Unit.TeamStatus.TEAM_2
-		print("Assigned Team 2")
+		print("Assigned Team 2, local_team = ", local_team)
 	
-	game_state = GameState.DEPLOYMENT 
+	print("START GAME local_team: ", local_team)
+	
+	game_state = GameState.DEPLOYMENT
 	get_tree().change_scene_to_file("res://scenes/GameScene.tscn")
 
 
