@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://dvbkqw12i4obk" path="res://assets/Materials/SkyBG.png" id="2_l7mlp"]
 [ext_resource type="Script" uid="uid://diiskm44fk6ox" path="res://scripts/HUD.gd" id="2_w22tq"]
 [ext_resource type="Script" uid="uid://bjw6prx0uxiil" path="res://scripts/WorldGen/world_gen.gd" id="3_davhy"]
+[ext_resource type="Theme" uid="uid://b1q5dev6y6ysl" path="res://Themes/button.tres" id="3_kxqg4"]
 [ext_resource type="Resource" uid="uid://bulbwto8ivwib" path="res://Resources/GenerationSettings/Default.tres" id="4_58wc8"]
 [ext_resource type="PackedScene" uid="uid://grijaagmqw4" path="res://scenes/Units/prototype_unit.tscn" id="8_r58of"]
 [ext_resource type="Script" uid="uid://bne86up5eweyd" path="res://scripts/WorldGen/object_placer.gd" id="9_p13dw"]
@@ -115,11 +116,13 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/font_size = 32
 
-[node name="StartGame" type="Button" parent="CameraParent/Camera3D/HUD/DeployPanel/VBoxContainer" unique_id=1017728850]
-custom_minimum_size = Vector2(0, 50)
+[node name="ReadyUp" type="Button" parent="CameraParent/Camera3D/HUD/DeployPanel/VBoxContainer" unique_id=1017728850]
+custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("3_kxqg4")
 theme_override_font_sizes/font_size = 24
-text = "Finish Deployment"
+text = "Ready"
 
 [node name="Inspector" type="Panel" parent="CameraParent/Camera3D/HUD" unique_id=422401666]
 z_index = 10
@@ -340,4 +343,4 @@ p_finder = NodePath("../Pathfinder")
 [connection signal="pressed" from="CameraParent/Camera3D/HUD/End Turn" to="CameraParent/Camera3D/HUD" method="_on_end_turn_pressed"]
 [connection signal="pressed" from="CameraParent/Camera3D/HUD/Deploy Mode" to="CameraParent/Camera3D/HUD" method="_on_deploy_mode_pressed"]
 [connection signal="pressed" from="CameraParent/Camera3D/HUD/Player Turn" to="CameraParent/Camera3D/HUD" method="_on_player_turn_pressed"]
-[connection signal="pressed" from="CameraParent/Camera3D/HUD/DeployPanel/VBoxContainer/StartGame" to="CameraParent/Camera3D/HUD" method="_on_start_game_pressed"]
+[connection signal="pressed" from="CameraParent/Camera3D/HUD/DeployPanel/VBoxContainer/ReadyUp" to="CameraParent/Camera3D/HUD" method="_on_ready_up_pressed"]

@@ -3,7 +3,7 @@ class_name Unit
 
 var data : UnitData
 
-var current_health: int
+var health_remaining: int
 var movement_remaining: int
 var attacks_remaining: int
 var troops_remaining: int
@@ -32,7 +32,7 @@ func _ready() -> void:
 
 
 func initialize():
-	current_health = data.max_health
+	health_remaining = data.max_health
 	attacks_remaining = data.attacks
 	movement_remaining = data.movement_range
 	troops_remaining = data.troops
@@ -66,8 +66,8 @@ func update_team_color():
 
 ## Update healthbar
 func update_health():
-	$Healthbar/SubViewport/Control/ProgressBar.value = current_health
+	$Healthbar/SubViewport/Control/ProgressBar.value = health_remaining
 	$Healthbar/SubViewport/Control/ProgressBar.max_value = data.max_health
-	$Healthbar/HealthNumber.text = "%d / %d" % [current_health, data.max_health]
-	if current_health <= 0:
+	$Healthbar/HealthNumber.text = "%d / %d" % [health_remaining, data.max_health]
+	if health_remaining <= 0:
 		queue_free()

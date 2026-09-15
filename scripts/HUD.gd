@@ -3,6 +3,7 @@ class_name HUD
 
 @onready var val = $Inspector/HBoxContainer/Values
 @onready var army = $DeployPanel/VBoxContainer/ArmyList
+@onready var deploy_panel = $DeployPanel
 
 
 func _ready():
@@ -27,10 +28,10 @@ func _process(_delta: float) -> void:
 #Update the stat inspector
 func update_inspector(unit):
 	var data : UnitData
-	val.get_node("HealthVal").text = str(unit.current_health) \
+	val.get_node("HealthVal").text = str(unit.health_remaining) \
 	+ "/" + str(unit.data.max_health)
 	val.get_node("ArmorVal").text = str(unit.data.armor)
-	val.get_node("TroopsVal").text = str(unit.current_troops) \
+	val.get_node("TroopsVal").text = str(unit.troops_remaining) \
 	+ "/" + str(unit.data.troops)
 	val.get_node("MovementVal").text = str(unit.movement_remaining) \
 	+ "/" + str(unit.data.movement_range)
@@ -91,3 +92,7 @@ func _on_army_item_selected(index: int):
 
 func remove_unit(unit: UnitData):
 	army.remove_item(HUDstate.selected_unit_index)
+
+
+func _on_ready_up_pressed() -> void:
+	GameManager.deployment_ready()

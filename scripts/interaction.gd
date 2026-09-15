@@ -57,32 +57,25 @@ func _unhandled_input(event: InputEvent) -> void:
 				
 		
 		elif Input.is_action_just_pressed("RightClick"):
-			if GameManager.game_state == GameManager.GameState.DEPLOYMENT:
-				# Add any right click deplyment logic here
+			if hit_object.is_in_group("units"):
+				var attack_tiles = p_finder.find_attackable_tiles(
+					selected_unit.occupied_tile,
+					selected_unit.data.attack_range)
 				
+				if not attack_tiles.has(hit_object.occupied_tile):
+					print("Target out of range")
+					return
 				
-				return
+				GameManager.request_attack(selected_unit, hit_object)
+				
 			else:
-				if hit_object.is_in_group("units"):
-					var attack_tiles = p_finder.find_attackable_tiles(
-						selected_unit.occupied_tile,
-						selected_unit.data.attack_range)
-					
-					if not attack_tiles.has(hit_object.occupied_tile):
-						print("Target out of range")
-						return
-						
-					
-					GameManager.request_attack(selected_unit, hit_object)
-					
-				else:
-					if not p_finder.reachable_distances.has(hit_object):
-						print("Tile is not reachable")
-						return
-					
-					var distance = p_finder.reachable_distances[hit_object]
-					print("Distance: ", distance)
-					GameManager.request_move_unit(selected_unit, hit_object, distance)
+				if not p_finder.reachable_distances.has(hit_object):
+					print("Tile is not reachable")
+					return
+				
+				var distance = p_finder.reachable_distances[hit_object]
+				print("Distance: ", distance)
+				GameManager.request_move_unit(selected_unit, hit_object, distance)
 
 
 func raycast_at_mouse(origin, end) -> Node3D:
@@ -123,14 +116,13 @@ func select_unit(unit):
 		highlight_unit(unit)
 		unit_moves = p_finder.find_reachable_tiles(unit.occupied_tile, unit.movement_remaining)
 		p_finder.highlight_tile(unit_moves)
-		attack_tiles = p_finder.find_reachable_tiles(unit.occupied_tile, unit.data.attack_range)
+		attack_tiles = p_finder.find_attackable_tiles(unit.occupied_tile, unit.data.attack_range)
 		p_finder.highlight_attack_tiles(attack_tiles)
 		get_tree().current_scene.get_node("CameraParent/Camera3D/HUD").update_inspector(selected_unit)
 
 
 func highlight_tile(tile):
 	deselect()
-	
 	selected_unit = null
 	selected_tile = tile
 	hide_cursor(unit_cursor)

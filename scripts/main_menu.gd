@@ -58,7 +58,7 @@ func _player_connected(id):
 	
 	if multiplayer.is_server():
 		assign_team(id)
-		GameManager.start_game.rpc()
+		GameManager.start_deployment.rpc()
 
 func _connected_to_server():
 	print("Connected!")
@@ -76,4 +76,4 @@ func _on_army_button_pressed() -> void:
 
 func _on_start_button_pressed() -> void:
 	print("starting...")
-	GameManager.start_game.rpc()
+	GameManager.start_deployment.rpc()

@@ -6,9 +6,8 @@ enum GameState {
 	TEAM_2_TURN
 }
 
-
-var peer_to_team: Dictionary = {}
 var game_state = GameState.TEAM_1_TURN
+var peer_to_team: Dictionary = {}
 var current_team = Unit.TeamStatus.TEAM_1
 var local_team = Unit.TeamStatus
 var turn_counter = 1
@@ -22,19 +21,18 @@ var unit_scene = preload("res://scenes/Units/prototype_unit.tscn")
 var deployment_rows: Vector2
 const DEPLOYMENT_DEPTH := 5
 
+var deploy_status = {
+	Unit.TeamStatus.TEAM_1: false,
+	Unit.TeamStatus.TEAM_2: false
+}
+
 @onready var hud: HUD
 @onready var interaction: INTERACTION
-
-
 
 
 func setup_deployment_zone():
 	deployment_rows = get_deployment_rows()
 	print("Deployment rows: ", deployment_rows)
-	
-	#for tile in WorldMap.map_as_dict.values():
-		#if is_deployment_tile(tile, Unit.TeamStatus.TEAM_2):
-			#print("TEAM 2 deployment: ", tile.pos_data.grid_position.y)
 
 
 func get_deployment_rows() -> Vector2:
@@ -76,6 +74,19 @@ func is_deployment_tile(tile: Tile, team: Unit.TeamStatus) -> bool:
 	return false
 
 
+func deployment_ready():
+	set_player_ready.rpc_id(1, local_team)
+
+
+@rpc("any_peer", "call_local", "reliable")
+func set_player_ready(team: Unit.TeamStatus):
+	deploy_status[team] = true
+	
+	print(str(team) + " is ready")
+	
+	if deploy_status[Unit.TeamStatus.TEAM_1] \
+	and deploy_status[Unit.TeamStatus.TEAM_2]:
+		start_game.rpc()
 
 func generate_unit_id() -> int:
 	var id = next_unit_id
@@ -95,74 +106,23 @@ func send_world_seed(seed: int):
 
 
 # Deployment logic
-func request_deploy_unit(
-	unit_type: UnitData,
-	tile: Tile
-):
-	print("Request deploy called. Local team: ", local_team)
+func request_deploy_unit(unit_type: UnitData, tile: Tile):
 	if tile == null:
 		return
-	
 	if game_state != GameState.DEPLOYMENT:
 		return
-	
 	if not is_deployment_tile(tile, local_team):
 		print("Tile is outside deployment zone")
 		return
 	
-	var unit_path: String = unit_type.resource_path
-	
-	if multiplayer.is_server():
-		request_deploy_unit_rpc(
-			unit_path,
-			tile.pos_data.grid_position,
-		)
-	else:
-		request_deploy_unit_rpc.rpc_id(
-			1,
-			unit_path,
-			tile.pos_data.grid_position,
-		)
-
-
-@rpc("any_peer", "reliable")
-func request_deploy_unit_rpc(
-	unit_path: String,
-	grid_position: Vector2
-):
-	print("Server received deploy request")
-	
-	if not multiplayer.is_server():
-		return
-	
-	var sender_id = multiplayer.get_remote_sender_id()
-	if sender_id == 0:
-		sender_id = 1
-	
-	var team = peer_to_team.get(sender_id)
-	
-	if team == null:
-		print("Unknown player")
-		return
-	
-	var tile: Tile = WorldMap.map_as_dict[grid_position]
-	
-	if tile == null:
-		return
-	
-	if tile.occupier != null:
-		print("Tile is occupied")
-		return
-	
-	spawn_unit.rpc(
-		unit_path,
-		grid_position,
-		team
+	deploy_unit.rpc(
+		unit_type.resource_path,
+		tile.pos_data.grid_position,
+		local_team
 	)
 
-
-@rpc("authority", "call_local", "reliable")
-func spawn_unit(
+@rpc("any_peer", "call_local", "reliable")
+func deploy_unit(
 	unit_path: String,
 	grid_position: Vector2,
 	team: Unit.TeamStatus
@@ -175,17 +135,17 @@ func spawn_unit(
 	get_tree().current_scene.add_child(unit)
 	units_by_id[unit.unit_id] = unit
 	
-	
 	unit.team = team
 	unit.update_team_color()
 	
 	var tile: Tile = WorldMap.map_as_dict[grid_position]
 	unit.place_unit(tile.position, tile)
+	
 	hud.remove_unit(unit_type)
 	HUDstate.selected_unit = null
 
 
-# Movment logic
+# Movement logic
 func request_move_unit(unit: Unit, tile: Tile, distance: int):
 	if unit == null:
 		return
@@ -197,51 +157,21 @@ func request_move_unit(unit: Unit, tile: Tile, distance: int):
 	if current_team != local_team:
 		print("It is not your turn")
 		return
-	
-	if multiplayer.is_server():
-		move_unit.rpc(unit.unit_id, tile.pos_data.grid_position, distance)
-	else:
-		request_move_unit_rpc.rpc_id(
-			1,
-			unit.unit_id,
-			tile.pos_data.grid_position,
-			distance
-		)
-
-@rpc("any_peer", "reliable")
-func request_move_unit_rpc(unit_id: int, grid_position: Vector2, distance: int):
-	if not multiplayer.is_server():
-		return
-	var unit = get_unit_by_id(unit_id)
-	if unit == null:
-		return
-	var tile: Tile = WorldMap.map_as_dict[grid_position]
-	if tile == null:
-		return
-	
-	var sender_id = multiplayer.get_remote_sender_id()
-	if sender_id == 0:
-		sender_id = 1
-	
-	var sender_team = peer_to_team.get(sender_id)
-	
-	if sender_team == null:
-		print("Unknown player")
-		return
-	
-	if unit.team != sender_team:
-		print("Cannot move with enemy units")
-		return
-	
-	
 	if tile.occupier != null:
 		print("Tile occupied")
 		return
+	if distance > unit.movement_remaining:
+		print("insufficient movement remaining")
+		return
 	
-	move_unit.rpc(unit_id, grid_position, distance)
+	move_unit.rpc(
+		unit.unit_id,
+		tile.pos_data.grid_position,
+		distance
+	)
 
 
-@rpc("authority", "call_local", "reliable")
+@rpc("any_peer", "call_local", "reliable")
 func move_unit(unit_id: int, grid_position: Vector2, distance: int):
 	var unit = get_unit_by_id(unit_id)
 	if unit == null:
@@ -254,9 +184,11 @@ func move_unit(unit_id: int, grid_position: Vector2, distance: int):
 	unit.place_unit(tile.position, tile)
 	unit.movement_remaining -= distance
 	unit.has_moved = true
-	 
+	
 	if unit.team == local_team:
-		var interaction = get_tree(). current_scene.get_node("Builder/Interaction_tracker")
+		var interaction = get_tree().current_scene.get_node(
+			"Builder/Interaction_tracker"
+		)
 		interaction.select_unit(unit)
 
 
@@ -282,47 +214,16 @@ func request_attack(attacker: Unit, target: Unit):
 		print("Please wait")
 		return
 	
-	if multiplayer.is_server():
-		server_request_attack(attacker.unit_id, target.unit_id)
-	else:
-		server_request_attack.rpc_id(1, attacker.unit_id, target.unit_id)
-	
-	return true
-
-
-@rpc("any_peer", "reliable")
-func server_request_attack(attacker_id: int, target_id: int):
-	if not multiplayer.is_server():
-		return
-	
-	var attacker = get_unit_by_id(attacker_id)
-	var target = get_unit_by_id(target_id)
-	
-	if attacker == null or target == null:
-		return
-	
-	var sender_id = multiplayer.get_remote_sender_id()
-	if sender_id == 0:
-		sender_id = 1
-	var sender_team = peer_to_team.get(sender_id)
-	
-	if sender_team == null:
-		print("Unknown player")
-		return
-	
-	if attacker.team != sender_team:
-		print("Cannot attack with enemy units")
-		return
-	
 	var accuracy = attacker.data.accuracy
 	var damage = attacker.data.damage
 	var pen = attacker.data.armor_pen
 	var armor = target.data.armor
 	var attack_results = []
 	
-	#Setup any attacking related Keywords
+	# Setup any attacking related Keywords
 	if attacker.data.INFANTRY:
 		attacker.attacks_remaining = attacker.troops_remaining * attacker.data.attacks
+	
 	if attacker.data.CONTROL:
 		attacker.attacks_remaining = target.troops_remaining
 	
@@ -336,28 +237,31 @@ func server_request_attack(attacker_id: int, target_id: int):
 		attack_results.append({
 			"hit": hit,
 			"wound": wound,
-			"damage": damage})
-	
+			"damage": damage
+		})
 	
 	attack_unit.rpc(
-		attacker_id,
-		target_id,
-		attack_results)
+		attacker.unit_id,
+		target.unit_id,
+		attack_results
+	)
+	
+	return true
 
 
-@rpc("authority", "call_local", "reliable")
+@rpc("any_peer", "call_local", "reliable")
 func attack_unit(
 	attacker_id: int,
 	target_id: int,
-	attack_results):
-	
-	print("attack_unit called on peer ", multiplayer.get_unique_id())
-	
+	attack_results
+):
 	var attacker = get_unit_by_id(attacker_id)
 	var target = get_unit_by_id(target_id)
 	
 	if attacker == null or target == null:
 		return
+		
+		print(attacker.data.unit_name, " attacks ", target.data.unit_name)
 	
 	can_attack = false
 	
@@ -365,12 +269,13 @@ func attack_unit(
 		
 		hud.hit_display(
 			result.hit,
-			result.wound)
+			result.wound
+		)
 		
 		if result.hit:
 			if result.wound:
 				print("Attack hit!")
-				target.current_health -= result.damage
+				target.health_remaining -= result.damage
 				target.update_health()
 			else:
 				print("Attack blocked")
@@ -379,9 +284,8 @@ func attack_unit(
 		
 		await get_tree().create_timer(1.1).timeout
 	
-	
 	attacker.attacks_remaining -= attacker.data.attacks
-	print(attacker.data.unit_name, " attacks ", target.data.unit_name)
+
 	
 	await get_tree().create_timer(1.5).timeout
 	can_attack = true
@@ -395,30 +299,8 @@ func get_unit_by_id(unit_id: int) -> Unit:
 	return null
 
 
-#End turn logic
 func end_turn():
 	if current_team != local_team:
-		return
-	
-	if multiplayer.is_server():
-		if game_state == GameState.TEAM_1_TURN:
-			set_turn.rpc(
-				GameState.TEAM_2_TURN,
-				Unit.TeamStatus.TEAM_2,
-				turn_counter
-			)
-		else:
-			set_turn.rpc(
-				GameState.TEAM_1_TURN,
-				Unit.TeamStatus.TEAM_1,
-				turn_counter + 1
-			)
-	else:
-		request_end_turn_rpc.rpc_id(1)
-
-@rpc("any_peer", "reliable")
-func request_end_turn_rpc():
-	if !multiplayer.is_server():
 		return
 	
 	if game_state == GameState.TEAM_1_TURN:
@@ -435,7 +317,7 @@ func request_end_turn_rpc():
 		)
 
 
-@rpc("authority", "call_local", "reliable")
+@rpc("any_peer", "call_local", "reliable")
 func set_turn(
 	new_state: GameState,
 	new_team: Unit.TeamStatus,
@@ -452,7 +334,7 @@ func set_turn(
 
 
 @rpc("call_local", "reliable")
-func start_game():
+func start_deployment():
 	if multiplayer.is_server():
 		local_team = Unit.TeamStatus.TEAM_1
 		print("Assigned Team 1, local_team = ", local_team)
@@ -477,3 +359,8 @@ func request_game_state(new_state: int):
 func set_game_state(new_state: int):
 	@warning_ignore("int_as_enum_without_cast")
 	game_state = new_state
+
+@rpc("call_local", "reliable")
+func start_game():
+	game_state = GameState.TEAM_1_TURN
+	hud.deploy_panel.visible = false

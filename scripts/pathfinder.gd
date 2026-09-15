@@ -12,6 +12,7 @@ var attack_markers = []
 var deploy_markers = []
 
 var reachable_distances = {}
+var attack_distances = {}
 
 
 
@@ -60,7 +61,7 @@ func find_reachable_tiles(start : Tile, movement_range: int) -> Array[Node3D]:
 
 
 func find_attackable_tiles(start : Tile, attack_range: int) -> Array[Node3D]:
-	reachable_distances.clear()
+	attack_distances.clear()
 	var queue = []
 	var visited = []
 	var attackable_tiles : Array[Node3D]
@@ -77,11 +78,10 @@ func find_attackable_tiles(start : Tile, attack_range: int) -> Array[Node3D]:
 		if current_distance > attack_range:
 			continue
 		
-		# Add the current tile to the reachable list
 		attackable_tiles.append(current_tile)
 		
-		# Measures the distance moved
-		reachable_distances[current_tile] = current_distance
+		# Measures the attack distance
+		attack_distances[current_tile] = current_distance
 		
 		var current_pos = current_tile.pos_data.grid_position
 		
@@ -91,13 +91,20 @@ func find_attackable_tiles(start : Tile, attack_range: int) -> Array[Node3D]:
 			else:
 				neighbor_positions = WorldMap.NEIGHBOR_DIRECTIONS_ODD
 		
-		# Explore neighbors
 		for direction in neighbor_positions:
-			var neighbor_coords = Vector2(current_pos.x + int(direction.x), current_pos.y + int(direction.y))
+			var neighbor_coords = Vector2(
+				current_pos.x + int(direction.x),
+				current_pos.y + int(direction.y)
+			)
+			
 			if not WorldMap.map_as_dict.has(neighbor_coords) or visited.has(neighbor_coords):
 				continue
+			
 			var neighbor_tile = WorldMap.map_as_dict[neighbor_coords]
-			queue.append({"tile": neighbor_tile, "distance": current_distance + 1})
+			queue.append({
+				"tile": neighbor_tile,
+				"distance": current_distance + 1
+			})
 			visited.append(neighbor_coords)
 		
 	return attackable_tiles
