@@ -2,17 +2,19 @@ extends Node
 
 enum GameState {
 	DEPLOYMENT,
-	TEAM_1_TURN,
-	TEAM_2_TURN
+	TURN
 }
 
-var game_state = GameState.TEAM_1_TURN
+var game_state = GameState.TURN
 var peer_to_team: Dictionary = {}
-var current_team = Unit.TeamStatus.TEAM_1
 var local_team = Unit.TeamStatus
 var turn_counter = 1
 var can_attack: bool = true
 var army_list: Array[UnitData] = []
+var master_unit_list: Array[Unit] = []
+
+var current_unit_index: int = 0
+var active_unit = master_unit_list[current_unit_index]
 
 var next_unit_id: = 0
 var units_by_id = {}
@@ -78,6 +80,13 @@ func deployment_ready():
 	set_player_ready.rpc_id(1, local_team)
 
 
+func sort_master_unit_list():
+	master_unit_list.sort_custom(
+		func(a: Unit, b: Unit):
+			return a.data.speed > b.data.speed
+	)
+
+
 @rpc("any_peer", "call_local", "reliable")
 func set_player_ready(team: Unit.TeamStatus):
 	deploy_status[team] = true
@@ -86,6 +95,7 @@ func set_player_ready(team: Unit.TeamStatus):
 	
 	if deploy_status[Unit.TeamStatus.TEAM_1] \
 	and deploy_status[Unit.TeamStatus.TEAM_2]:
+		sort_master_unit_list()
 		start_game.rpc()
 
 func generate_unit_id() -> int:
@@ -134,6 +144,7 @@ func deploy_unit(
 	unit.unit_id = generate_unit_id()
 	get_tree().current_scene.add_child(unit)
 	units_by_id[unit.unit_id] = unit
+	master_unit_list.append(unit)
 	
 	unit.team = team
 	unit.update_team_color()
@@ -141,8 +152,8 @@ func deploy_unit(
 	var tile: Tile = WorldMap.map_as_dict[grid_position]
 	unit.place_unit(tile.position, tile)
 	
-	hud.remove_unit(unit_type)
-	HUDstate.selected_unit = null
+	if team == local_team:
+		hud.remove_unit()
 
 
 # Movement logic
@@ -154,8 +165,8 @@ func request_move_unit(unit: Unit, tile: Tile, distance: int):
 	if unit.team != local_team:
 		print("Cannot move enemy units")
 		return
-	if current_team != local_team:
-		print("It is not your turn")
+	if unit != master_unit_list[current_unit_index]:
+		print("It is not this unit's turn")
 		return
 	if tile.occupier != null:
 		print("Tile occupied")
@@ -186,9 +197,6 @@ func move_unit(unit_id: int, grid_position: Vector2, distance: int):
 	unit.has_moved = true
 	
 	if unit.team == local_team:
-		var interaction = get_tree().current_scene.get_node(
-			"Builder/Interaction_tracker"
-		)
 		interaction.select_unit(unit)
 
 
@@ -204,8 +212,8 @@ func request_attack(attacker: Unit, target: Unit):
 	if attacker.attacks_remaining <= 0:
 		print("Unit is out of attacks")
 		return
-	if current_team != local_team:
-		print("It is not your turn")
+	if attacker != master_unit_list[current_unit_index]:
+		print("It is not this unit's turn")
 		return
 	if attacker.team == target.team:
 		print("Cannot attack friendly units")
@@ -300,38 +308,30 @@ func get_unit_by_id(unit_id: int) -> Unit:
 
 
 func end_turn():
-	if current_team != local_team:
+	var current_unit = master_unit_list[current_unit_index]
+	
+	if current_unit.team != local_team:
 		return
 	
-	if game_state == GameState.TEAM_1_TURN:
-		set_turn.rpc(
-			GameState.TEAM_2_TURN,
-			Unit.TeamStatus.TEAM_2,
-			turn_counter
-		)
-	else:
-		set_turn.rpc(
-			GameState.TEAM_1_TURN,
-			Unit.TeamStatus.TEAM_1,
-			turn_counter + 1
-		)
+	var next_index = current_unit_index + 1
+	
+	if next_index >= master_unit_list.size():
+		next_index = 0
+	
+	set_current_unit.rpc(next_index)
 
 
 @rpc("any_peer", "call_local", "reliable")
-func set_turn(
-	new_state: GameState,
-	new_team: Unit.TeamStatus,
-	new_turn: int
-):
-	game_state = new_state
-	current_team = new_team
-	turn_counter = new_turn
+func set_current_unit(index: int):
+	current_unit_index = index
 	
-	for unit in get_tree().get_nodes_in_group("units"):
-		unit.movement_remaining = unit.data.movement_range
-		unit.has_moved = false
-		unit.attacks_remaining = unit.data.attacks
-
+	var unit = master_unit_list[current_unit_index]
+	
+	unit.movement_remaining = unit.data.movement_range
+	unit.has_moved = false
+	unit.attacks_remaining = unit.data.attacks
+	
+	interaction.select_unit(unit)
 
 @rpc("call_local", "reliable")
 func start_deployment():
@@ -362,5 +362,6 @@ func set_game_state(new_state: int):
 
 @rpc("call_local", "reliable")
 func start_game():
-	game_state = GameState.TEAM_1_TURN
+	current_unit_index = 0
+	game_state = GameState.TURN
 	hud.deploy_panel.visible = false

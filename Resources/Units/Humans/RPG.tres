@@ -8,6 +8,7 @@ script = ExtResource("1_vbano")
 unit_name = "RPG"
 max_health = 1
 movement_range = 3
+speed = 45
 accuracy = 60
 damage = 1
 armor_pen = 3

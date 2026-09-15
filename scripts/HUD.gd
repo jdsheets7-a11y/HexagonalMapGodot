@@ -12,17 +12,8 @@ func _ready():
 	army.item_selected.connect(_on_army_item_selected)
 
 
-
 func _process(_delta: float) -> void:
-	var team_text = ""
-	
-	match GameManager.game_state:
-		GameManager.GameState.TEAM_1_TURN:
-			team_text = "Team 1"
-		GameManager.GameState.TEAM_2_TURN:
-			team_text = "Team 2"
-	
-	$TurnCounter.text= "Turn: %d - %s" % [GameManager.turn_counter, team_text]
+	$TurnCounter.text= "Round: " + str(GameManager.turn_counter)
 
 
 #Update the stat inspector
@@ -56,13 +47,6 @@ func _on_deploy_mode_pressed() -> void:
 		GameManager.request_game_state.rpc_id(1, GameManager.GameState.DEPLOYMENT)
 
 
-func _on_player_turn_pressed() -> void:
-	if multiplayer.is_server():
-		GameManager.set_game_state.rpc(GameManager.GameState.TEAM_1_TURN)
-	else:
-		GameManager.request_game_state.rpc_id(1, GameManager.GameState.TEAM_1_TURN)
-
-
 func hit_display(hit: bool, wound: bool):
 	if hit and wound:
 		$HitIndicator.color = Color(0.129, 0.612, 0.102, 1.0)
@@ -80,6 +64,7 @@ func hit_display(hit: bool, wound: bool):
 
 
 func build_army():
+	army.clear()
 	for unit in GameManager.army_list:
 		army.add_item(unit.unit_name)
 
@@ -90,9 +75,13 @@ func _on_army_item_selected(index: int):
 	print(HUDstate.selected_unit.unit_name + " selected")
 
 
-func remove_unit(unit: UnitData):
-	army.remove_item(HUDstate.selected_unit_index)
+func remove_unit():
+	var index = HUDstate.selected_unit_index
 
+	army.remove_item(index)
+	GameManager.army_list.remove_at(index)
+	HUDstate.selected_unit = null
+	HUDstate.selected_unit_index = -1
 
 func _on_ready_up_pressed() -> void:
 	GameManager.deployment_ready()

@@ -4,7 +4,8 @@ class_name UnitData
 
 @export var unit_name : String
 @export var max_health: int
-@export var movement_range: int 
+@export var movement_range: int
+@export var speed: int
 @export var accuracy: int
 @export var damage: int
 @export var armor_pen: int
@@ -15,6 +16,7 @@ class_name UnitData
 @export var point_cost: int
 @export var model: PackedScene
 @export var icon: Texture2D
+
 
 
 enum Faction {

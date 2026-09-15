@@ -7,6 +7,7 @@ script = ExtResource("1_5deje")
 unit_name = "Rippers"
 max_health = 1
 movement_range = 5
+speed = 80
 accuracy = 30
 damage = 1
 attacks = 1
