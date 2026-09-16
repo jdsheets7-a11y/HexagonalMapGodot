@@ -35,16 +35,8 @@ func update_inspector(unit):
 	$Inspector.visible = true
 
 
-
 func _on_end_turn_pressed() -> void:
 	GameManager.end_turn()
-
-
-func _on_deploy_mode_pressed() -> void:
-	if multiplayer.is_server():
-		GameManager.set_game_state.rpc(GameManager.GameState.DEPLOYMENT)
-	else:
-		GameManager.request_game_state.rpc_id(1, GameManager.GameState.DEPLOYMENT)
 
 
 func hit_display(hit: bool, wound: bool):

@@ -12,9 +12,9 @@ var turn_counter = 1
 var can_attack: bool = true
 var army_list: Array[UnitData] = []
 var master_unit_list: Array[Unit] = []
+var print_master_list: Array[String] = []
 
 var current_unit_index: int = 0
-var active_unit = master_unit_list[current_unit_index]
 
 var next_unit_id: = 0
 var units_by_id = {}
@@ -52,10 +52,6 @@ func get_deployment_rows() -> Vector2:
 func get_deployment_tiles(team: Unit.TeamStatus) -> Array[Tile]:
 	var deployment_tiles: Array[Tile] = []
 	
-	print("GET DEPLOYMENT")
-	print("Team: ", team)
-	print("Deployment rows: ", deployment_rows)
-	print("Depth: ", DEPLOYMENT_DEPTH)
 	
 	for tile in WorldMap.map_as_dict.values():
 		if is_deployment_tile(tile, team):
@@ -77,7 +73,7 @@ func is_deployment_tile(tile: Tile, team: Unit.TeamStatus) -> bool:
 
 
 func deployment_ready():
-	set_player_ready.rpc_id(1, local_team)
+	set_player_ready.rpc(local_team)
 
 
 func sort_master_unit_list():
@@ -96,7 +92,20 @@ func set_player_ready(team: Unit.TeamStatus):
 	if deploy_status[Unit.TeamStatus.TEAM_1] \
 	and deploy_status[Unit.TeamStatus.TEAM_2]:
 		sort_master_unit_list()
+		for i in master_unit_list:
+			print_master_list.append(i.data.unit_name)
+		print(print_master_list)
+		
 		start_game.rpc()
+
+
+@rpc("call_local", "reliable")
+func start_game():
+	current_unit_index = 0
+	game_state = GameState.TURN
+	hud.deploy_panel.visible = false
+	set_current_unit(current_unit_index)
+
 
 func generate_unit_id() -> int:
 	var id = next_unit_id
@@ -274,6 +283,8 @@ func attack_unit(
 	can_attack = false
 	
 	for result in attack_results:
+		if target == null:
+			return
 		
 		hud.hit_display(
 			result.hit,
@@ -309,15 +320,13 @@ func get_unit_by_id(unit_id: int) -> Unit:
 
 func end_turn():
 	var current_unit = master_unit_list[current_unit_index]
-	
 	if current_unit.team != local_team:
 		return
-	
+		
 	var next_index = current_unit_index + 1
-	
 	if next_index >= master_unit_list.size():
 		next_index = 0
-	
+	interaction.deselect()
 	set_current_unit.rpc(next_index)
 
 
@@ -331,7 +340,8 @@ func set_current_unit(index: int):
 	unit.has_moved = false
 	unit.attacks_remaining = unit.data.attacks
 	
-	interaction.select_unit(unit)
+	if unit.team == local_team:
+		interaction.select_unit(unit)
 
 @rpc("call_local", "reliable")
 func start_deployment():
@@ -346,22 +356,3 @@ func start_deployment():
 	
 	game_state = GameState.DEPLOYMENT
 	get_tree().change_scene_to_file("res://scenes/GameScene.tscn")
-
-
-@rpc("any_peer", "reliable")
-func request_game_state(new_state: int):
-	if not multiplayer.is_server():
-		return
-	
-	set_game_state.rpc(new_state)
-
-@rpc("authority", "call_local", "reliable")
-func set_game_state(new_state: int):
-	@warning_ignore("int_as_enum_without_cast")
-	game_state = new_state
-
-@rpc("call_local", "reliable")
-func start_game():
-	current_unit_index = 0
-	game_state = GameState.TURN
-	hud.deploy_panel.visible = false

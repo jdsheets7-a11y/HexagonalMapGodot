@@ -83,9 +83,5 @@ func get_placeable_tiles() -> Array[Tile]:
 
 
 func show_deployment_zone():
-	print("SHOW DEPLOYMENT local_team: ", GameManager.local_team)
-	
 	var deployment_tiles = GameManager.get_deployment_tiles(GameManager.local_team)
-	print("Deployment tiles: ", deployment_tiles.size())
-	
 	p_finder.highlight_deployment_tiles(deployment_tiles)

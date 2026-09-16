@@ -16,6 +16,7 @@ var occupied_tile: Tile
 
 
 func _ready() -> void:
+	GameManager.interaction = self
 	if not tile_cursor or tile_cursor == null:
 		tile_cursor = tile_cursor_scene.instantiate()
 		add_child(tile_cursor)
@@ -70,7 +71,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				
 			else:
 				if not p_finder.reachable_distances.has(hit_object):
-					print("Tile is not reachable")
+					print("Not enough movement")
 					return
 				
 				var distance = p_finder.reachable_distances[hit_object]
