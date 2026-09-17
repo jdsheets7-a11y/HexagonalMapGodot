@@ -21,7 +21,7 @@ var units_by_id = {}
 var unit_scene = preload("res://scenes/Units/prototype_unit.tscn")
 
 var deployment_rows: Vector2
-const DEPLOYMENT_DEPTH := 5
+const DEPLOYMENT_DEPTH := 4
 
 var deploy_status = {
 	Unit.TeamStatus.TEAM_1: false,
@@ -218,9 +218,6 @@ func request_attack(attacker: Unit, target: Unit):
 	if attacker.team != local_team:
 		print("Cannot attack with enemy units")
 		return
-	if attacker.attacks_remaining <= 0:
-		print("Unit is out of attacks")
-		return
 	if attacker != master_unit_list[current_unit_index]:
 		print("It is not this unit's turn")
 		return
@@ -231,18 +228,24 @@ func request_attack(attacker: Unit, target: Unit):
 		print("Please wait")
 		return
 	
-	var accuracy = attacker.data.accuracy
-	var damage = attacker.data.damage
-	var pen = attacker.data.armor_pen
-	var armor = target.data.armor
-	var attack_results = []
-	
 	# Setup any attacking related Keywords
 	if attacker.data.INFANTRY:
 		attacker.attacks_remaining = attacker.troops_remaining * attacker.data.attacks
 	
 	if attacker.data.CONTROL:
 		attacker.attacks_remaining = target.troops_remaining
+	
+	if attacker.attacks_remaining <= 0:
+		print("Unit is out of attacks")
+		return
+	
+	var accuracy = attacker.data.accuracy
+	var damage = attacker.data.damage
+	var pen = attacker.data.armor_pen
+	var armor = target.data.armor
+	var attack_results = []
+	
+
 	
 	for i in range(attacker.attacks_remaining):
 		var hit: bool = accuracy >= randi_range(1, 100)
@@ -304,7 +307,6 @@ func attack_unit(
 		await get_tree().create_timer(1.1).timeout
 	
 	attacker.attacks_remaining -= attacker.data.attacks
-
 	
 	await get_tree().create_timer(1.5).timeout
 	can_attack = true

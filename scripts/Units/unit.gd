@@ -7,6 +7,7 @@ var health_remaining: int
 var movement_remaining: int
 var attacks_remaining: int
 var troops_remaining: int
+var total_health: int
 
 @export var has_moved: bool = false
 @export var has_attacked: bool = false
@@ -32,7 +33,8 @@ func _ready() -> void:
 
 
 func initialize():
-	health_remaining = data.max_health
+	total_health = data.troops * data.health_per_troop
+	health_remaining = total_health
 	attacks_remaining = data.attacks
 	movement_remaining = data.movement_range
 	troops_remaining = data.troops
@@ -67,7 +69,9 @@ func update_team_color():
 ## Update healthbar
 func update_health():
 	$Healthbar/SubViewport/Control/ProgressBar.value = health_remaining
-	$Healthbar/SubViewport/Control/ProgressBar.max_value = data.max_health
-	$Healthbar/HealthNumber.text = "%d / %d" % [health_remaining, data.max_health]
+	$Healthbar/SubViewport/Control/ProgressBar.max_value = total_health
+	$Healthbar/HealthNumber.text = "%d / %d" % [health_remaining, total_health]
+	troops_remaining = ceil(health_remaining/data.health_per_troop)
 	if health_remaining <= 0:
+		GameManager.master_unit_list.erase(self)
 		queue_free()

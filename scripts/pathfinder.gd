@@ -60,7 +60,7 @@ func find_reachable_tiles(start : Tile, movement_range: int) -> Array[Node3D]:
 	return reachable_tiles
 
 
-func find_attackable_tiles(start : Tile, attack_range: int) -> Array[Node3D]:
+func find_attackable_tiles(start : Tile, attack_range: int, min_attack_range: int) -> Array[Node3D]:
 	attack_distances.clear()
 	var queue = []
 	var visited = []
@@ -77,8 +77,9 @@ func find_attackable_tiles(start : Tile, attack_range: int) -> Array[Node3D]:
 		
 		if current_distance > attack_range:
 			continue
-		
-		attackable_tiles.append(current_tile)
+			
+		if current_distance >= min_attack_range:
+			attackable_tiles.append(current_tile)
 		
 		# Measures the attack distance
 		attack_distances[current_tile] = current_distance

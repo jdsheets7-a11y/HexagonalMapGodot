@@ -20,7 +20,7 @@ func _process(_delta: float) -> void:
 func update_inspector(unit):
 	var data : UnitData
 	val.get_node("HealthVal").text = str(unit.health_remaining) \
-	+ "/" + str(unit.data.max_health)
+	+ "/" + str(unit.total_health)
 	val.get_node("ArmorVal").text = str(unit.data.armor)
 	val.get_node("TroopsVal").text = str(unit.troops_remaining) \
 	+ "/" + str(unit.data.troops)

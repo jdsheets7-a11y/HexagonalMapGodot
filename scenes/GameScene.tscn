@@ -201,11 +201,11 @@ theme_override_font_sizes/font_size = 24
 text = "Range: "
 horizontal_alignment = 2
 
-[node name="Attacks" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=1720152401]
+[node name="Attacks" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=1652997171]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
-text = "Attacks: "
+text = "Range: "
 horizontal_alignment = 2
 
 [node name="Values" type="VBoxContainer" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer" unique_id=192840689]
@@ -250,7 +250,7 @@ custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 
-[node name="AttacksVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1440277824]
+[node name="AttacksVal" type="Label" parent="CameraParent/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1598848694]
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24

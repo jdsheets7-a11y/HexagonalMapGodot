@@ -5,7 +5,8 @@
 [resource]
 script = ExtResource("1_bgibu")
 unit_name = "Lazer Mech"
-max_health = 3
+health_per_troop = 3
+troops = 1
 movement_range = 2
 speed = 50
 accuracy = 65
@@ -13,8 +14,8 @@ damage = 3
 armor_pen = 5
 attacks = 1
 attack_range = 5
+min_attack_range = 2
 armor = 4
-troops = 1
 point_cost = 15
 faction = 1
 metadata/_custom_type_script = "uid://cgwwpc3udlsdg"
