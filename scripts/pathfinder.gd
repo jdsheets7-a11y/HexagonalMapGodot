@@ -14,7 +14,8 @@ var deploy_markers = []
 var reachable_distances = {}
 var attack_distances = {}
 
-
+func _ready():
+	GameManager.p_finder = self
 
 func find_reachable_tiles(start : Tile, movement_range: int) -> Array[Node3D]:
 	reachable_distances.clear()

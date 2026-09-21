@@ -40,7 +40,7 @@ func initialize():
 	troops_remaining = data.troops
 
 
-## Put this unit on a tile at position
+# Put this unit on a tile at position
 func place_unit(new_position : Vector3, tile):
 	position = new_position
 	leave_tile()
@@ -57,7 +57,7 @@ func leave_tile():
 		occupied_tile.occupier = null
 
 
-## Changing color depending on team
+# Changing color depending on team
 func update_team_color():
 	var mesh = $CSGCylinder3D
 	if team == TeamStatus.TEAM_2:
@@ -66,12 +66,16 @@ func update_team_color():
 		mesh.material.albedo_color = Color.BLUE
 
 
-## Update healthbar
+# Update healthbar
 func update_health():
 	$Healthbar/SubViewport/Control/ProgressBar.value = health_remaining
 	$Healthbar/SubViewport/Control/ProgressBar.max_value = total_health
 	$Healthbar/HealthNumber.text = "%d / %d" % [health_remaining, total_health]
 	troops_remaining = ceil(health_remaining/data.health_per_troop)
+	
+	var index = GameManager.master_unit_list.find(self)
 	if health_remaining <= 0:
+		if index < GameManager.current_unit_index:
+			GameManager.current_unit_index -= 1
 		GameManager.master_unit_list.erase(self)
 		queue_free()

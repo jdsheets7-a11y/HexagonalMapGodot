@@ -68,4 +68,5 @@ font_size = 248
 
 [node name="NameTag" type="Label3D" parent="." unique_id=362411878]
 offset = Vector2(0, 550)
-font_size = 248
+billboard = 1
+font_size = 200

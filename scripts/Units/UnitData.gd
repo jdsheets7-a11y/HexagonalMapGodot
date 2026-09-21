@@ -14,7 +14,6 @@ class_name UnitData
 @export var attack_range: int
 @export var min_attack_range: int
 @export var armor: int
-
 @export var point_cost: int
 @export var model: PackedScene
 @export var icon: Texture2D

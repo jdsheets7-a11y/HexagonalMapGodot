@@ -30,6 +30,7 @@ var deploy_status = {
 
 @onready var hud: HUD
 @onready var interaction: INTERACTION
+@onready var p_finder: PATHFINDER
 
 
 func setup_deployment_zone():
@@ -76,9 +77,18 @@ func deployment_ready():
 	set_player_ready.rpc(local_team)
 
 
-func sort_master_unit_list():
+func sort_master_unit_list(picker: int):
+	var first_team = Unit.TeamStatus
+	if picker == 0:
+		first_team = Unit.TeamStatus.TEAM_1
+	else:
+		first_team = Unit.TeamStatus.TEAM_2
+	
 	master_unit_list.sort_custom(
 		func(a: Unit, b: Unit):
+			if a.data.speed == b.data.speed:
+				if a.team != b.team:
+					return a.team == first_team
 			return a.data.speed > b.data.speed
 	)
 
@@ -91,20 +101,22 @@ func set_player_ready(team: Unit.TeamStatus):
 	
 	if deploy_status[Unit.TeamStatus.TEAM_1] \
 	and deploy_status[Unit.TeamStatus.TEAM_2]:
-		sort_master_unit_list()
-		for i in master_unit_list:
-			print_master_list.append(i.data.unit_name)
-		print(print_master_list)
+		if multiplayer.is_server():
+			var picker = randi_range(0, 1)
+			start_game.rpc(picker)
 		
 		start_game.rpc()
 
 
 @rpc("call_local", "reliable")
-func start_game():
+func start_game(picker: int):
+	sort_master_unit_list(picker)
+	
 	current_unit_index = 0
 	game_state = GameState.TURN
 	hud.deploy_panel.visible = false
 	set_current_unit(current_unit_index)
+	p_finder.clear_deployment_highlight()
 
 
 func generate_unit_id() -> int:
@@ -183,6 +195,9 @@ func request_move_unit(unit: Unit, tile: Tile, distance: int):
 	if distance > unit.movement_remaining:
 		print("insufficient movement remaining")
 		return
+	if unit.has_attacked and unit.has_moved:
+		print("Cannot move, unit has already moved before shooting")
+		return
 	
 	move_unit.rpc(
 		unit.unit_id,
@@ -245,8 +260,6 @@ func request_attack(attacker: Unit, target: Unit):
 	var armor = target.data.armor
 	var attack_results = []
 	
-
-	
 	for i in range(attacker.attacks_remaining):
 		var hit: bool = accuracy >= randi_range(1, 100)
 		var wound = false
@@ -307,9 +320,11 @@ func attack_unit(
 		await get_tree().create_timer(1.1).timeout
 	
 	attacker.attacks_remaining -= attacker.data.attacks
+	attacker.has_attacked = true
 	
 	await get_tree().create_timer(1.5).timeout
 	can_attack = true
+	
 
 
 func get_unit_by_id(unit_id: int) -> Unit:
@@ -340,7 +355,9 @@ func set_current_unit(index: int):
 	
 	unit.movement_remaining = unit.data.movement_range
 	unit.has_moved = false
+	unit.has_attacked = false
 	unit.attacks_remaining = unit.data.attacks
+	can_attack = true
 	
 	if unit.team == local_team:
 		interaction.select_unit(unit)
