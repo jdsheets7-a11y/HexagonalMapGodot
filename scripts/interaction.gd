@@ -105,7 +105,7 @@ func deselect():
 	selected_unit = null
 	p_finder.clear_highlight()
 	p_finder.clear_attack_highlight()
-	get_tree().current_scene.get_node("CameraParent/Camera3D/HUD/Inspector").visible = false
+	get_tree().current_scene.get_node("CameraParent/CameraPitch/Camera3D/HUD/Inspector").visible = false
 
 
 func select_unit(unit):

@@ -1,78 +1,96 @@
 extends Camera3D
 
 @export_category("Movement")
-@export var movespeed = 20
-@export var zoomspeed = 1.5
-@export var zoom = Vector2(10.0, 80.0)
-@export var height = Vector2(0, 40)
-@export var rot = Vector2(-20, -80)
-@export var sun: DirectionalLight3D
-var parent
+@export var movespeed := 30.0
+@export var zoomspeed := 3.0
+
+@export_category("Camera")
+@export var default_distance := 20.0
+@export var min_distance := -10.0
+@export var max_distance := 40.0
+@export var rotate_sensitivity := 0.004
+@export var min_pitch := -80.0
+@export var max_pitch := -10.0
+
+var camera_parent: Node3D
+var camera_pitch: Node3D
+
+var rotating_camera := false
+var pitch := deg_to_rad(-45.0)
+var camera_distance: float
 
 
 func _ready() -> void:
-	parent = get_parent()
-	adjust_height()
-	adjust_rotation()
+	camera_pitch = get_parent()
+	camera_parent = camera_pitch.get_parent()
+	set_default_camera()
 
 
 func _process(delta: float) -> void:
 	move_camera(delta)
 
+func set_default_camera():
+	camera_distance = default_distance
+	position = Vector3(0, 0, camera_distance)
+	camera_pitch.rotation.x = pitch
 
-func move_camera(delta):
-	## Movement
-	var move_vector : Vector3 = Vector3.ZERO
+
+func move_camera(delta: float) -> void:
+	var move_vector := Vector3.ZERO
 	if Input.is_action_pressed("MoveForward"):
-		move_vector += -parent.transform.basis.z
+		move_vector += -camera_parent.transform.basis.z
 	if Input.is_action_pressed("MoveBackwards"):
-		move_vector += parent.transform.basis.z
+		move_vector += camera_parent.transform.basis.z
 	if Input.is_action_pressed("MoveLeft"):
-		move_vector += -parent.transform.basis.x
+		move_vector += -camera_parent.transform.basis.x
 	if Input.is_action_pressed("MoveRight"):
-		move_vector += parent.transform.basis.x
-	## Rotation
-	if Input.is_action_pressed("RotateCameraLeft"):
-		parent.rotate(Vector3.UP, 0.01)
-	if Input.is_action_pressed("RotateCameraRight"):
-		parent.rotate(Vector3.UP, -0.01)
-	## Apply movement & rotation
+		move_vector += camera_parent.transform.basis.x
+	if Input.is_action_just_pressed("ResetCamera"):
+		set_default_camera()
 	if move_vector != Vector3.ZERO:
-		move_vector = move_vector.normalized() * movespeed * delta
-		parent.position += move_vector
+		move_vector.y = 0
+		move_vector = move_vector.normalized()
+		camera_parent.position += move_vector * movespeed * delta
 
 
 func _input(event: InputEvent) -> void:
-	# Check for mouse wheel scrolling
+
+	# Right mouse button controls camera orbit
 	if event is InputEventMouseButton:
-		change_fov(event.button_index)
-		adjust_height()
-		adjust_rotation()
-		adjust_shadows()
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			rotating_camera = event.pressed
+		# Zoom
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			camera_distance -= zoomspeed
+			camera_distance = clamp(
+				camera_distance,
+				min_distance,
+				max_distance
+			)
+			update_camera_distance()
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			camera_distance += zoomspeed
+			camera_distance = clamp(
+				camera_distance,
+				min_distance,
+				max_distance
+			)
+			update_camera_distance()
 
 
-func change_fov(index):
-	if index == MOUSE_BUTTON_WHEEL_UP:
-		fov = max(zoom.x, fov - zoomspeed)  # Zoom in by decreasing FOV
-	elif index == MOUSE_BUTTON_WHEEL_DOWN:
-		fov = min(zoom.y, fov + zoomspeed)  # Zoom out by increasing FOV
-	
-
-func adjust_height():
-	var new_height = inverse_lerp(zoom.x, zoom.y, fov)
-	position.y = lerpf(height.x, height.y, new_height)
-
-
-func adjust_rotation():
-	var min_r = deg_to_rad(rot.x)
-	var max_r = deg_to_rad(rot.y)
-	var new_rot = inverse_lerp(zoom.x, zoom.y, fov)
-	rotation.x = lerpf(min_r, max_r, new_rot)
+	# Camera orbit
+	if event is InputEventMouseMotion and rotating_camera:
+		# Horizontal orbit
+		camera_parent.rotate_y(-event.relative.x * rotate_sensitivity)
+		# Vertical orbit
+		pitch -= event.relative.y * rotate_sensitivity
+		pitch = clamp(
+			pitch,
+			deg_to_rad(min_pitch),
+			deg_to_rad(max_pitch)
+		)
+		camera_pitch.rotation.x = pitch
 
 
-## Test to see if we can turn shadows on or off when getting closer to the scene
-func adjust_shadows():
-	if fov < 40 or position.y < 10:
-		sun.shadow_enabled = true
-	elif sun.shadow_enabled:
-		sun.shadow_enabled = false
+func update_camera_distance() -> void:
+	position.z = camera_distance
