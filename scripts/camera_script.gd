@@ -8,10 +8,10 @@ extends Camera3D
 @export var default_distance := 20.0
 
 @export var default_position = Vector3(0, 0, 10)
-@export var default_rotation = Vector3.ZERO
+@export var default_rotation: float = 0
 
 @export var default_position2 = Vector3(0, 0, -10)
-@export var default_rotation2 = Vector3(0, PI, 0)
+@export var default_rotation2: float = 180
 
 @export var min_distance := 5.0
 @export var max_distance := 40.0
@@ -23,7 +23,7 @@ var camera_parent: Node3D
 var camera_pitch: Node3D
 
 var rotating_camera := false
-var pitch := deg_to_rad(-45.0)
+var pitch: float = -45
 var camera_distance: float
 
 
@@ -36,19 +36,53 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	move_camera(delta)
 
+
 func set_default_camera():
 	if GameManager.local_team == Unit.TeamStatus.TEAM_1:
-		camera_parent.position = default_position
-		camera_parent.rotation = default_rotation
+		move_camera_to(default_position, 0, pitch, default_distance)
 	else:
-		camera_parent.position = default_position2
-		camera_parent.rotation = default_rotation2
+		move_camera_to(default_position2, 180, pitch, default_distance)
+
+
+func move_camera_to(
+	target_position: Vector3,
+	target_rotation: float,
+	target_pitch: float,
+	target_distance: float,
+	duration: float = 1.5
+):
+	var tween = create_tween()
+	tween.set_parallel(true)
 	
-	pitch = deg_to_rad(-45.0)
-	camera_pitch.rotation.x = pitch
+	tween.tween_property(
+		camera_parent,
+		"position",
+		target_position,
+		duration
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	
-	camera_distance = default_distance
-	position = Vector3(0, 0, camera_distance)
+	tween.tween_property(
+		camera_parent,
+		"rotation:y",
+		deg_to_rad(target_rotation),
+		duration
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	tween.tween_property(
+		camera_pitch,
+		"rotation:x",
+		deg_to_rad(target_pitch),
+		duration
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	tween.tween_property(
+		self,
+		"position:z",
+		target_distance,
+		duration
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	camera_distance = target_distance
 
 
 func move_camera(delta: float) -> void:
