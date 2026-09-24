@@ -27,7 +27,6 @@ func load_units(faction: UnitData.Faction):
 		child.queue_free()
 	
 	print("Loading faction: ", faction)
-	print("Units in database: ", UnitDatabase.unit_catalog.values())
 	
 	for unit in UnitDatabase.unit_catalog.values():
 		if unit.faction != faction:

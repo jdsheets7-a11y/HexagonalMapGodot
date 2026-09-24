@@ -123,7 +123,7 @@ func select_unit(unit):
 			unit.data.attack_range,
 			unit.data.min_attack_range)
 		p_finder.highlight_attack_tiles(attack_tiles)
-		get_tree().current_scene.get_node("CameraParent/Camera3D/HUD").update_inspector(selected_unit)
+		get_tree().current_scene.get_node("CameraParent/CameraPitch/Camera3D/HUD").update_inspector(selected_unit)
 
 
 func highlight_tile(tile):

@@ -6,7 +6,14 @@ extends Camera3D
 
 @export_category("Camera")
 @export var default_distance := 20.0
-@export var min_distance := -10.0
+
+@export var default_position = Vector3(0, 0, 10)
+@export var default_rotation = Vector3.ZERO
+
+@export var default_position2 = Vector3(0, 0, -10)
+@export var default_rotation2 = Vector3(0, PI, 0)
+
+@export var min_distance := 5.0
 @export var max_distance := 40.0
 @export var rotate_sensitivity := 0.004
 @export var min_pitch := -80.0
@@ -30,9 +37,18 @@ func _process(delta: float) -> void:
 	move_camera(delta)
 
 func set_default_camera():
+	if GameManager.local_team == Unit.TeamStatus.TEAM_1:
+		camera_parent.position = default_position
+		camera_parent.rotation = default_rotation
+	else:
+		camera_parent.position = default_position2
+		camera_parent.rotation = default_rotation2
+	
+	pitch = deg_to_rad(-45.0)
+	camera_pitch.rotation.x = pitch
+	
 	camera_distance = default_distance
 	position = Vector3(0, 0, camera_distance)
-	camera_pitch.rotation.x = pitch
 
 
 func move_camera(delta: float) -> void:

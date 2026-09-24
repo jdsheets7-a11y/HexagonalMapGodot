@@ -12,7 +12,7 @@ var turn_counter = 1
 var can_attack: bool = true
 var army_list: Array[UnitData] = []
 var master_unit_list: Array[Unit] = []
-var print_master_list: Array[String] = []
+
 
 var current_unit_index: int = 0
 
@@ -64,10 +64,10 @@ func get_deployment_tiles(team: Unit.TeamStatus) -> Array[Tile]:
 func is_deployment_tile(tile: Tile, team: Unit.TeamStatus) -> bool:
 	var row = tile.pos_data.grid_position.y
 	
-	if team == Unit.TeamStatus.TEAM_1:
+	if team == Unit.TeamStatus.TEAM_2:
 		return row <= deployment_rows.x + DEPLOYMENT_DEPTH - 1
 		
-	if team == Unit.TeamStatus.TEAM_2:
+	if team == Unit.TeamStatus.TEAM_1:
 		return row >= deployment_rows.y - DEPLOYMENT_DEPTH + 1
 	
 	return false
