@@ -32,6 +32,7 @@ var pitch: float = deg_to_rad(default_pitch)
 var camera_distance: float
 
 
+
 func _ready() -> void:
 	GameManager.camera = self
 	camera_pitch = get_parent()
