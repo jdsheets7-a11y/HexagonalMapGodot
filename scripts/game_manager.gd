@@ -31,6 +31,7 @@ var deploy_status = {
 @onready var hud: HUD
 @onready var interaction: INTERACTION
 @onready var p_finder: PATHFINDER
+@onready var camera: CAMERA
 
 
 func setup_deployment_zone():
@@ -360,7 +361,9 @@ func set_current_unit(index: int):
 	can_attack = true
 	
 	if unit.team == local_team:
+		var tile_spot = unit.occupied_tile.position
 		interaction.select_unit(unit)
+		camera.camera_to_unit(tile_spot)
 
 @rpc("call_local", "reliable")
 func start_deployment():

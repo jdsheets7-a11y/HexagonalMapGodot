@@ -44,7 +44,6 @@ dof_blur_far_transition = 45.0
 [node name="World" type="Node3D" unique_id=1963662747]
 
 [node name="CameraParent" type="Node3D" parent="." unique_id=2133586496]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.117906, 15.1842, 10.1434)
 
 [node name="CameraPitch" type="Node3D" parent="CameraParent" unique_id=1292501697]
 
