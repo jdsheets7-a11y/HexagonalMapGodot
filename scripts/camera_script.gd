@@ -27,6 +27,7 @@ var pitch: float = -45
 var camera_distance: float
 
 
+
 func _ready() -> void:
 	camera_pitch = get_parent()
 	camera_parent = camera_pitch.get_parent()
