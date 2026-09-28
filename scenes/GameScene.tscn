@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://2aqfkdhpyn5b" path="res://scenes/Cursors/deploy_a_overlay.tscn" id="12_qitmq"]
 [ext_resource type="Script" uid="uid://8c4mygj6ghrg" path="res://scripts/interaction.gd" id="12_tt8b8"]
 [ext_resource type="PackedScene" uid="uid://cqxjxq25t6wuy" path="res://scenes/Cursors/unit_cursor.tscn" id="13_ydfkh"]
+[ext_resource type="PackedScene" uid="uid://bx3bwg2s53tg0" path="res://scenes/Cursors/fog.tscn" id="14_21xg8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mf2rh"]
 
@@ -329,6 +330,7 @@ script = ExtResource("10_0b4my")
 highlight_marker = ExtResource("12_0kgq4")
 attack_marker = ExtResource("11_e8rlm")
 deploy_marker = ExtResource("12_qitmq")
+fog = ExtResource("14_21xg8")
 
 [node name="Interaction_tracker" type="Node3D" parent="Builder" unique_id=1053099130 node_paths=PackedStringArray("main_camera", "p_finder")]
 unique_name_in_owner = true

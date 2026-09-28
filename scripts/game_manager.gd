@@ -365,6 +365,7 @@ func set_current_unit(index: int):
 		interaction.select_unit(unit)
 		camera.camera_to_unit(tile_spot)
 
+
 @rpc("call_local", "reliable")
 func start_deployment():
 	if multiplayer.is_server():

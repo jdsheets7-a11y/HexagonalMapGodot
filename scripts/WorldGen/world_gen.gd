@@ -85,3 +85,6 @@ func get_placeable_tiles() -> Array[Tile]:
 func show_deployment_zone():
 	var deployment_tiles = GameManager.get_deployment_tiles(GameManager.local_team)
 	p_finder.highlight_deployment_tiles(deployment_tiles)
+	p_finder.setup_fog()
+	
+	

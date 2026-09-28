@@ -182,12 +182,12 @@ func camera_to_unit(tile_spot):
 	if GameManager.local_team == Unit.TeamStatus.TEAM_1:
 		x += 0
 		y += 0
-		z += 10
+		z += 0
 		var pos = Vector3(x, y, z)
-		move_camera_to(pos, 0, -45, 5)
+		move_camera_to(pos, 0, -55, 10)
 	else:
 		x += 0
 		y += 0
-		z += -10
+		z += 0
 		var pos = Vector3(x, y, z)
-		move_camera_to(pos, 180, -45, 5)
+		move_camera_to(pos, 180, -55, 10)

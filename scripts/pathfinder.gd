@@ -6,13 +6,16 @@ var neighbor_positions = WorldMap.HEXAGONAL_NEIGHBOR_DIRECTIONS
 @export var highlight_marker: PackedScene
 @export var attack_marker: PackedScene
 @export var deploy_marker: PackedScene
+@export var fog: PackedScene
 
 var movement_markers = []
 var attack_markers = []
 var deploy_markers = []
+var fog_markers: Array[Node3D] = []
 
 var reachable_distances = {}
 var attack_distances = {}
+var visible_tiles = {}
 
 func _ready():
 	GameManager.p_finder = self
@@ -66,11 +69,10 @@ func find_attackable_tiles(start : Tile, attack_range: int, min_attack_range: in
 	var queue = []
 	var visited = []
 	var attackable_tiles : Array[Node3D]
-
 	# Start from the initial tile
 	queue.append({"tile": start, "distance": 0})
 	visited.append(Vector2(start.pos_data.grid_position.x, start.pos_data.grid_position.y))
-
+	
 	while queue.size() > 0:
 		var current = queue.pop_front()
 		var current_tile : Tile = current["tile"]
@@ -78,7 +80,6 @@ func find_attackable_tiles(start : Tile, attack_range: int, min_attack_range: in
 		
 		if current_distance > attack_range:
 			continue
-			
 		if current_distance >= min_attack_range:
 			attackable_tiles.append(current_tile)
 		
@@ -192,3 +193,16 @@ func clear_attack_highlight():
 	if attack_markers.size() > 0:
 		for m in attack_markers:
 			m.visible = false
+
+
+func setup_fog():
+	var deployment_tiles = GameManager.get_deployment_tiles(GameManager.local_team)
+	for tile in WorldMap.map_as_dict.values():
+		if tile not in deployment_tiles:
+			var fog_marker = fog.instantiate()
+			tile.add_child(fog_marker)
+			fog_markers.append(fog_marker)
+
+
+func update_fog():
+	pass
