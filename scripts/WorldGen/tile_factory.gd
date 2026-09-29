@@ -201,7 +201,7 @@ func init_tile(tile : Tile, position : PositionData):
 	var fog_instance = FOG.instantiate()
 	tile.add_child(fog_instance)
 	tile.fog = fog_instance
-	fog_instance.position.y = 0.5
+	fog_instance.position.y = 0.2
 
 
 func calculate_biome_weights() -> Array[float]:

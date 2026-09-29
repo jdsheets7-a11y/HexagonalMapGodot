@@ -8,6 +8,8 @@ var neighbor_positions = WorldMap.HEXAGONAL_NEIGHBOR_DIRECTIONS
 @export var deploy_marker: PackedScene
 @export var fog: PackedScene
 
+var data: UnitData
+
 var movement_markers = []
 var attack_markers = []
 var deploy_markers = []
@@ -15,7 +17,7 @@ var deploy_markers = []
 var reachable_distances = {}
 var attack_distances = {}
 
-const VISION_RANGE: int = 5
+const VISION_RANGE: int = 4
 
 func _ready():
 	GameManager.p_finder = self
@@ -205,21 +207,34 @@ func setup_fog():
 @rpc("any_peer", "call_local", "reliable")
 func update_fog():
 	var visible_tiles: Array[Tile] = []
-
+	var deployment_tiles = GameManager.get_deployment_tiles(GameManager.local_team)
+	var tiles
+	
 	for unit in GameManager.units_by_id.values():
 		if unit.team != GameManager.local_team:
 			continue
 		if unit.occupied_tile == null:
 			continue
-			
-		var tiles = find_visible_tiles(unit.occupied_tile, VISION_RANGE)
+		
+		if unit.data.SCOUT:
+			tiles = find_visible_tiles(unit.occupied_tile, VISION_RANGE + 2)
+		else:
+			tiles = find_visible_tiles(unit.occupied_tile, VISION_RANGE)
+		
 		for tile in tiles:
 			if tile not in visible_tiles:
 				visible_tiles.append(tile)
 	
 	# Update fog on every tile
 	for tile in WorldMap.map_as_dict.values():
-		tile.fog.visible = tile not in visible_tiles
+		tile.fog.visible = tile not in visible_tiles and tile not in deployment_tiles
+	
+	# Unit visibility
+	for unit in GameManager.units_by_id.values():
+		if unit.team == GameManager.local_team:
+			unit.visible = true
+		else:
+			unit.visible = not unit.occupied_tile.fog.visible
 
 
 func find_visible_tiles(start: Tile, vision_range: int) -> Array[Tile]:

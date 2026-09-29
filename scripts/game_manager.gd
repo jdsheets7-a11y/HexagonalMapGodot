@@ -176,6 +176,7 @@ func deploy_unit(
 	
 	if team == local_team:
 		hud.remove_unit()
+	p_finder.update_fog()
 
 
 # Movement logic

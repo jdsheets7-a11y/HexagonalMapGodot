@@ -1,7 +1,7 @@
 extends Node3D
 class_name Unit
 
-var data : UnitData
+var data: UnitData
 
 var health_remaining: int
 var movement_remaining: int
@@ -78,4 +78,5 @@ func update_health():
 		if index < GameManager.current_unit_index:
 			GameManager.current_unit_index -= 1
 		GameManager.master_unit_list.erase(self)
+		GameManager.units_by_id.erase(self)
 		queue_free()

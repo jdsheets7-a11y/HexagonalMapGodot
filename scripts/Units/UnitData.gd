@@ -31,3 +31,4 @@ enum Faction {
 @export var CONTROL: bool
 @export var MELEE: bool
 @export var SWARM: bool
+@export var SCOUT: bool
