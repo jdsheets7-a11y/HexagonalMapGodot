@@ -11,3 +11,5 @@ var placeable = true
 
 var occupier : Unit
 var debug_label : Label3D
+
+var fog = Node3D

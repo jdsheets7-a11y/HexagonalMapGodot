@@ -11,11 +11,11 @@ var neighbor_positions = WorldMap.HEXAGONAL_NEIGHBOR_DIRECTIONS
 var movement_markers = []
 var attack_markers = []
 var deploy_markers = []
-var fog_markers: Array[Node3D] = []
 
 var reachable_distances = {}
 var attack_distances = {}
-var visible_tiles = {}
+
+const VISION_RANGE: int = 5
 
 func _ready():
 	GameManager.p_finder = self
@@ -198,11 +198,60 @@ func clear_attack_highlight():
 func setup_fog():
 	var deployment_tiles = GameManager.get_deployment_tiles(GameManager.local_team)
 	for tile in WorldMap.map_as_dict.values():
-		if tile not in deployment_tiles:
-			var fog_marker = fog.instantiate()
-			tile.add_child(fog_marker)
-			fog_markers.append(fog_marker)
+		if tile in deployment_tiles:
+			tile.fog.visible = false
 
 
+@rpc("any_peer", "call_local", "reliable")
 func update_fog():
-	pass
+	var visible_tiles: Array[Tile] = []
+
+	for unit in GameManager.units_by_id.values():
+		if unit.team != GameManager.local_team:
+			continue
+		if unit.occupied_tile == null:
+			continue
+			
+		var tiles = find_visible_tiles(unit.occupied_tile, VISION_RANGE)
+		for tile in tiles:
+			if tile not in visible_tiles:
+				visible_tiles.append(tile)
+	
+	# Update fog on every tile
+	for tile in WorldMap.map_as_dict.values():
+		tile.fog.visible = tile not in visible_tiles
+
+
+func find_visible_tiles(start: Tile, vision_range: int) -> Array[Tile]:
+	var visible_tiles: Array[Tile] = []
+	var visited: Array[Tile] = []
+	var queue = []
+	
+	queue.append({
+		"tile": start,
+		"distance": 0
+	})
+	visited.append(start)
+	
+	while queue.size() > 0:
+		var current = queue.pop_front()
+		var current_tile: Tile = current["tile"]
+		var current_distance: int = current["distance"]
+		
+		visible_tiles.append(current_tile)
+		
+		if current_distance >= vision_range:
+			continue
+		
+		for neighbor in current_tile.neighbors:
+			if neighbor in visited:
+				continue
+			
+			visited.append(neighbor)
+			
+			queue.append({
+				"tile": neighbor,
+				"distance": current_distance + 1
+			})
+	
+	return visible_tiles

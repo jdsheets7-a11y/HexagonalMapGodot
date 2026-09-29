@@ -223,6 +223,8 @@ func move_unit(unit_id: int, grid_position: Vector2, distance: int):
 	
 	if unit.team == local_team:
 		interaction.select_unit(unit)
+	
+	p_finder.update_fog.rpc()
 
 
 # Attacking logic

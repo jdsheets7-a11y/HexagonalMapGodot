@@ -6,6 +6,7 @@ const HEX_TILE_COLLIDER = preload("res://assets/Meshes/Tiles/HexTileCollider.tsc
 const OCEAN_GAPFILL = preload("res://assets/Meshes/Tiles/ocean_gapfill.glb")
 const EDGE_GAPFILL = preload("res://assets/Meshes/Tiles/edge_gapfill.glb")
 const TILE_SCRIPT = preload("res://scripts/WorldGen/tile.gd")
+const FOG = preload("res://scenes/Cursors/fog.tscn")
 
 # Variables
 var tile_materials: Array[Material]
@@ -195,6 +196,12 @@ func init_tile(tile : Tile, position : PositionData):
 	tile_parent.add_child(tile)
 	tile.pos_data = position
 	tile.biome = Tile.biome_type.find_key(tile.mesh_data.type)
+	
+	# Add fog
+	var fog_instance = FOG.instantiate()
+	tile.add_child(fog_instance)
+	tile.fog = fog_instance
+	fog_instance.position.y = 0.5
 
 
 func calculate_biome_weights() -> Array[float]:
