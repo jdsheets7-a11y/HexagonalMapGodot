@@ -5,12 +5,12 @@
 [resource]
 script = ExtResource("1_5deje")
 unit_name = "Rippers"
-health_per_troop = 1
+health_per_troop = 10
 troops = 5
 movement_range = 5
 speed = 80
 accuracy = 40
-damage = 1
+damage = 10
 attacks = 1
 attack_range = 1
 point_cost = 5

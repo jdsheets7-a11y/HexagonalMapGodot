@@ -2,7 +2,7 @@ extends Node
 
 var map : Array[Tile]
 var map_as_dict : Dictionary = {}
-var is_map_staggered = false
+var is_map_staggered = true
 
 ## Shorthand for different layout/neighbor configurations depending on map-shape
 const HEXAGONAL_NEIGHBOR_DIRECTIONS = [
@@ -42,12 +42,14 @@ const NEIGHBOR_WORLD_OFFSET = [
 	Vector3(-0.866, 0, -0.5)  # Top-left
 ]
 
-
 func set_map(all_tiles):
 	map = all_tiles
+	
 	for t in all_tiles:
 		map_as_dict[Vector2(t.pos_data.grid_position.x, t.pos_data.grid_position.y)] = t
-
+	
+	for t in all_tiles:
+		t.neighbors = get_tile_neighbors(t)
 
 ## Handy function for finding all neigbors of a tile
 func get_tile_neighbors(tile : Tile) -> Array[Tile]:

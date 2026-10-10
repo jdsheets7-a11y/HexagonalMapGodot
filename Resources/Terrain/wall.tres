@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Terrain" format=3 uid="uid://vqr42ypg4cxl"]
+
+[ext_resource type="Script" uid="uid://cesdgu15loydb" path="res://scripts/WorldGen/terrain.gd" id="1_tawfg"]
+
+[resource]
+script = ExtResource("1_tawfg")
+blocks_los = true
+blocks_movement = true
+metadata/_custom_type_script = "uid://cesdgu15loydb"

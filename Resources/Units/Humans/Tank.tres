@@ -5,12 +5,12 @@
 [resource]
 script = ExtResource("1_h6shk")
 unit_name = "Tank"
-health_per_troop = 4
+health_per_troop = 40
 troops = 1
 movement_range = 2
 speed = 20
 accuracy = 75
-damage = 3
+damage = 30
 armor_pen = 4
 attacks = 1
 attack_range = 4

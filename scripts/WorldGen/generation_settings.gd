@@ -32,3 +32,7 @@ enum shape {HEXAGONAL, RECTANGULAR, DIAMOND, CIRCLE}
 @export var spawn_villages = true
 @export var map_edge_buffer = 2
 @export_range(1, 99) var spacing = 6
+
+@export var authored_desert: TileMeshData
+@export var authored_grassland: TileMeshData
+@export var authored_flat_grassland: TileMeshData

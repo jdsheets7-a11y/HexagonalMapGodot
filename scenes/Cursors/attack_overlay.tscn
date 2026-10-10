@@ -4,7 +4,7 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a6cos"]
 transparency = 1
-albedo_color = Color(1, 0.34117648, 0.3254902, 0.39215687)
+albedo_color = Color(0.90511876, 0.12386293, 0.14415923, 0.78431374)
 
 [node name="AttackHexOverlay" unique_id=245611172 instance=ExtResource("1_jwb6q")]
 transform = Transform3D(0.95, 0, 0, 0, 0.95, 0, 0, 0, 0.95, 0, 0, 0)

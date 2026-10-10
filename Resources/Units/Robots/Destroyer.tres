@@ -5,12 +5,12 @@
 [resource]
 script = ExtResource("1_7vp70")
 unit_name = "Destroyer"
-health_per_troop = 4
+health_per_troop = 40
 troops = 1
 movement_range = 3
 speed = 30
 accuracy = 60
-damage = 1
+damage = 10
 armor_pen = 1
 attacks = 5
 attack_range = 1

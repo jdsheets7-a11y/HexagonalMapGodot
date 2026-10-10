@@ -181,7 +181,7 @@ func instantiate_ocean_tile():
 func init_tile(tile : Tile, position : PositionData):
 	if not tile.is_in_group("tiles"):
 		tile.add_to_group("tiles")
-
+	
 	#Add collider
 	var col = HEX_TILE_COLLIDER.instantiate()
 	tile.add_child(col)
@@ -191,7 +191,7 @@ func init_tile(tile : Tile, position : PositionData):
 	var mesh_instance: MeshInstance3D = tile.get_child(0) as MeshInstance3D
 	if mesh_instance and tile.mesh_data.index != 99: #99 signifies ocean
 		mesh_instance.material_override = tile_materials[tile.mesh_data.index]
-
+	
 	tile.position = position.world_position
 	tile_parent.add_child(tile)
 	tile.pos_data = position
@@ -201,7 +201,8 @@ func init_tile(tile : Tile, position : PositionData):
 	var fog_instance = FOG.instantiate()
 	tile.add_child(fog_instance)
 	tile.fog = fog_instance
-	fog_instance.position.y = 0.2
+	fog_instance.position.y = 0.1
+	fog_instance.visible = true
 
 
 func calculate_biome_weights() -> Array[float]:
@@ -220,8 +221,76 @@ func debug_tile(tile : Tile, grid_position : Vector2):
 	#Add a label
 	var label = Label3D.new()
 	tile.add_child(label)
-	label.text = str(grid_position.x) + ", " + str(grid_position.y)
-	label.text += "\n" + str(-grid_position.x - grid_position.y)
-	label.text += "\n" + str(tile.pos_data.world_position) 
+	label.text = str(int(grid_position.x)) + ", " + str(int(grid_position.y))
+	#label.text += "\n" + str(-grid_position.x - grid_position.y)
+	#label.text += "\n" + str(tile.pos_data.world_position) 
 	label.position.y += 0.4
 	tile.debug_label = label
+	label.font_size = 124
+	label.billboard = true
+
+
+# AUTHORED WORLD GEN
+func create_authored_map(map_data: MappingData) -> Array[Tile]:
+	var new_map: Array[Tile] = []
+	
+	# Create materials from the existing TileMeshData resources
+	for m in settings.tiles:
+		if m.shader_override != null:
+			tile_materials.append(m.shader_override)
+			continue
+		
+		var new_mat = StandardMaterial3D.new()
+		new_mat.albedo_color = m.color
+		tile_materials.append(new_mat)
+	
+	var desert_index = settings.tiles.find(settings.authored_desert)
+	var grassland_index = settings.tiles.find(settings.authored_grassland)
+	var flat_grassland_index = settings.tiles.find(settings.authored_flat_grassland)
+	
+	var layout = [
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF",
+		"FFFFFFFFFFFFFFFFFFFFFF"
+	]
+	
+	for pos in map_data.positions:
+		var row = int(pos.grid_position.y) + 10
+		var col = int(pos.grid_position.x) + 10
+		
+		var biome_index: int
+		
+		match layout[row][col]:
+			"D":
+				biome_index = desert_index
+			"G":
+				biome_index = grassland_index
+			"F":
+				biome_index = flat_grassland_index
+		
+		var new_tile = instantiate_tile(biome_index)
+		
+		init_tile(new_tile, pos)
+		new_map.append(new_tile)
+		debug_tile(new_tile, pos.grid_position)
+	
+	print("Authored tiles placed: " + str(new_map.size()))
+	return new_map

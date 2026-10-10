@@ -5,12 +5,12 @@
 [resource]
 script = ExtResource("1_jng2t")
 unit_name = "Auto Cannons"
-health_per_troop = 3
+health_per_troop = 30
 troops = 1
 movement_range = 3
 speed = 55
 accuracy = 40
-damage = 1
+damage = 10
 armor_pen = 1
 attacks = 3
 attack_range = 3

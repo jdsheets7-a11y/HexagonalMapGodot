@@ -9,7 +9,7 @@
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_fvu5l"]
 noise_type = 0
-frequency = 0.0175
+frequency = 0.0125
 fractal_gain = 0.48
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_q8vkx"]
@@ -34,3 +34,6 @@ ocean_tile = ExtResource("1_3tupl")
 ocean_noise = SubResource("FastNoiseLite_3udsx")
 ocean_treshold = 0.65
 spawn_villages = false
+authored_desert = ExtResource("5_wdlhr")
+authored_grassland = ExtResource("3_f5ryx")
+authored_flat_grassland = ExtResource("4_bhwte")

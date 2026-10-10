@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://b7wc00itifh8b"]
+
+[ext_resource type="Script" uid="uid://bclrka0057djm" path="res://scripts/Terrain/wall.gd" id="1_bxtbg"]
+[ext_resource type="Resource" uid="uid://vqr42ypg4cxl" path="res://Resources/Terrain/wall.tres" id="2_vnlic"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_vdmbh"]
+size = Vector3(0.5, 1, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p0pec"]
+albedo_color = Color(0.7294118, 1, 1, 1)
+
+[node name="Wall" type="MeshInstance3D" unique_id=1411995677]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
+mesh = SubResource("BoxMesh_vdmbh")
+surface_material_override/0 = SubResource("StandardMaterial3D_p0pec")
+script = ExtResource("1_bxtbg")
+terrain = ExtResource("2_vnlic")

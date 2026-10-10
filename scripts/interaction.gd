@@ -15,6 +15,9 @@ var unit_cursor: Node3D
 var occupied_tile: Tile
 
 
+var wall = preload("res://Resources/Terrain/wall.tres")
+
+
 func _ready() -> void:
 	GameManager.interaction = self
 	if not tile_cursor or tile_cursor == null:
@@ -116,13 +119,18 @@ func select_unit(unit):
 	hide_cursor(tile_cursor)
 	if unit is Unit:
 		highlight_unit(unit)
-		unit_moves = p_finder.find_reachable_tiles(unit.occupied_tile, unit.movement_remaining)
+		
+		unit_moves = p_finder.find_reachable_tiles(
+			unit.occupied_tile,
+			unit.movement_remaining)
 		p_finder.highlight_tile(unit_moves)
+		
 		attack_tiles = p_finder.find_attackable_tiles(
 			unit.occupied_tile, 
 			unit.data.attack_range,
 			unit.data.min_attack_range)
 		p_finder.highlight_attack_tiles(attack_tiles)
+		
 		get_tree().current_scene.get_node("CameraParent/CameraPitch/Camera3D/HUD").update_inspector(selected_unit)
 
 

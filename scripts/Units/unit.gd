@@ -13,7 +13,7 @@ var total_health: int
 @export var has_attacked: bool = false
 @export var team = TeamStatus.TEAM_1
 
-var occupied_tile : Tile
+var occupied_tile: Tile
 var unit_id: int = -1
 
 enum TeamStatus {TEAM_1, TEAM_2}
@@ -68,8 +68,10 @@ func update_team_color():
 
 # Update healthbar
 func update_health():
-	$Healthbar/SubViewport/Control/ProgressBar.value = health_remaining
-	$Healthbar/SubViewport/Control/ProgressBar.max_value = total_health
+	var bar = $Healthbar/SubViewport/Control/ProgressBar
+	bar.max_value = total_health
+	bar.value = health_remaining
+	
 	$Healthbar/HealthNumber.text = "%d / %d" % [health_remaining, total_health]
 	troops_remaining = ceil(health_remaining/data.health_per_troop)
 	

@@ -8,6 +8,6 @@ albedo_color = Color(0.038397167, 0.038397167, 0.03839716, 1)
 
 [node name="FogOverlay" unique_id=245611172 instance=ExtResource("1_6uq5t")]
 
-[node name="Hex_Overlay" parent="." index="0" unique_id=788747158]
+[node name="Hex_Overlay" parent="." index="0" unique_id=959253441]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 material_override = SubResource("StandardMaterial3D_a6cos")

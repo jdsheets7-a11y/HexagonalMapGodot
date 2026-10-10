@@ -21,12 +21,13 @@ var units_by_id = {}
 var unit_scene = preload("res://scenes/Units/prototype_unit.tscn")
 
 var deployment_rows: Vector2
-const DEPLOYMENT_DEPTH := 4
+const DEPLOYMENT_DEPTH := 11
 
 var deploy_status = {
 	Unit.TeamStatus.TEAM_1: false,
 	Unit.TeamStatus.TEAM_2: false
 }
+
 
 @onready var hud: HUD
 @onready var interaction: INTERACTION
@@ -54,7 +55,6 @@ func get_deployment_rows() -> Vector2:
 func get_deployment_tiles(team: Unit.TeamStatus) -> Array[Tile]:
 	var deployment_tiles: Array[Tile] = []
 	
-	
 	for tile in WorldMap.map_as_dict.values():
 		if is_deployment_tile(tile, team):
 			deployment_tiles.append(tile)
@@ -76,6 +76,15 @@ func is_deployment_tile(tile: Tile, team: Unit.TeamStatus) -> bool:
 
 func deployment_ready():
 	set_player_ready.rpc(local_team)
+
+
+@rpc("authority", "call_remote", "reliable")
+func start_authored_world():
+	var world_generator = get_tree().current_scene.get_node("Builder/WorldGenerator")
+	world_generator.generate_authored_world()
+	
+	setup_deployment_zone()
+	world_generator.show_deployment_zone()
 
 
 func sort_master_unit_list(picker: int):
@@ -193,6 +202,9 @@ func request_move_unit(unit: Unit, tile: Tile, distance: int):
 		return
 	if tile.occupier != null:
 		print("Tile occupied")
+		return
+	if tile.terrain != null and tile.terrain.blocks_movement:
+		print("Terrain in the way")
 		return
 	if distance > unit.movement_remaining:
 		print("insufficient movement remaining")

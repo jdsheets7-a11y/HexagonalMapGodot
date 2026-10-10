@@ -5,12 +5,12 @@
 [resource]
 script = ExtResource("1_xpe37")
 unit_name = "Soldiers"
-health_per_troop = 1
+health_per_troop = 10
 troops = 3
 movement_range = 3
 speed = 60
 accuracy = 50
-damage = 1
+damage = 10
 armor_pen = 1
 attacks = 1
 attack_range = 3
