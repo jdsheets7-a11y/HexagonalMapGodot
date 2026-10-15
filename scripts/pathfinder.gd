@@ -22,7 +22,7 @@ var cover_markers = []
 var reachable_distances = {}
 var attack_distances = {}
 
-const VISION_RANGE: int = 4
+const VISION_RANGE: int = 5
 
 enum LOSResult {
 	BLOCKED,
@@ -290,7 +290,7 @@ func update_fog():
 			continue
 		
 		if unit.data.SCOUT:
-			tiles = find_visible_tiles(unit.occupied_tile, VISION_RANGE + 2)
+			tiles = find_visible_tiles(unit.occupied_tile, VISION_RANGE + 1)
 		else:
 			tiles = find_visible_tiles(unit.occupied_tile, VISION_RANGE)
 		

@@ -13,7 +13,6 @@ var can_attack: bool = true
 var army_list: Array[UnitData] = []
 var master_unit_list: Array[Unit] = []
 
-
 var current_unit_index: int = 0
 
 var next_unit_id: = 0
@@ -21,7 +20,7 @@ var units_by_id = {}
 var unit_scene = preload("res://scenes/Units/prototype_unit.tscn")
 
 var deployment_rows: Vector2
-const DEPLOYMENT_DEPTH := 11
+const DEPLOYMENT_DEPTH := 4
 
 var deploy_status = {
 	Unit.TeamStatus.TEAM_1: false,
@@ -258,26 +257,39 @@ func request_attack(attacker: Unit, target: Unit):
 	if can_attack == false:
 		print("Please wait")
 		return
-	
-	# Setup any attacking related Keywords
-	if attacker.data.INFANTRY:
-		attacker.attacks_remaining = attacker.troops_remaining * attacker.data.attacks
-	
-	if attacker.data.CONTROL:
-		attacker.attacks_remaining = target.troops_remaining
-	
-	if attacker.attacks_remaining <= 0:
+	if attacker.has_attacked:
 		print("Unit is out of attacks")
 		return
-	
+		
 	var accuracy = attacker.data.accuracy
 	var damage = attacker.data.damage
 	var pen = attacker.data.armor_pen
 	var armor = target.data.armor
 	var attack_results = []
+	var evasion: int = 0
+	
+	# Setup any related Keywords
+	if attacker.data.INFANTRY:
+		attacker.attacks_remaining = attacker.troops_remaining * attacker.data.attacks
+	if attacker.data.CONTROL:
+		attacker.attacks_remaining = target.troops_remaining
+	if target.data.EVASIVE:
+		evasion += 5
+	if target.data.BULKY:
+		evasion -= 5
+	if attacker.data.IMPACT and target.data.armor > 4:
+		damage += damage * 0.5
+	
+	if attacker.attacks_remaining <= 0:
+		print("Unit is out of attacks")
+		return
+	
+	if p_finder.get_line_of_sight(attacker.occupied_tile, target.occupied_tile)\
+	 == p_finder.LOSResult.PARTIAL_COVER:
+		evasion += 20
 	
 	for i in range(attacker.attacks_remaining):
-		var hit: bool = accuracy >= randi_range(1, 100)
+		var hit: bool = accuracy - evasion >= randi_range(1, 100)
 		var wound = false
 		
 		if hit:
@@ -311,8 +323,6 @@ func attack_unit(
 		return
 		
 		print(attacker.data.unit_name, " attacks ", target.data.unit_name)
-	
-	can_attack = false
 	
 	for result in attack_results:
 		if target == null:

@@ -26,9 +26,12 @@ enum Faction {
 
 @export var faction = Faction.HUMAN
 
-#Tags
+#KEYWORDS
 @export var INFANTRY: bool
 @export var CONTROL: bool
 @export var MELEE: bool
-@export var SWARM: bool
+@export var NIMBLE: bool
 @export var SCOUT: bool
+@export var EVASIVE: bool
+@export var BULKY: bool
+@export var IMPACT: bool

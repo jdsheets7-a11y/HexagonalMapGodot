@@ -80,5 +80,10 @@ func update_health():
 		if index < GameManager.current_unit_index:
 			GameManager.current_unit_index -= 1
 		GameManager.master_unit_list.erase(self)
-		GameManager.units_by_id.erase(self)
+		GameManager.units_by_id.erase(unit_id)
+		
+		print("Dying unit ID: ", unit_id)
+		#print("Dictionary contains ID before erase: ", GameManager.units_by_id.has(unit_id))
+		#GameManager.units_by_id.erase(unit_id)
+		#print("Dictionary contains ID after erase: ", GameManager.units_by_id.has(unit_id))
 		queue_free()
