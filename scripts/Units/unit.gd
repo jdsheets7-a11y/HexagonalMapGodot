@@ -21,14 +21,13 @@ enum TeamStatus {TEAM_1, TEAM_2}
 
 func _ready() -> void:
 	initialize()
-	
 	add_to_group("units")
 	
 	var mesh = $CSGCylinder3D
 	mesh.material = mesh.material.duplicate()
 	
 	$Healthbar/Sprite3D.texture = $Healthbar/SubViewport.get_texture()
-	$NameTag.text = data.unit_name
+	$Healthbar/NameTag.text = data.unit_name
 	update_health()
 
 

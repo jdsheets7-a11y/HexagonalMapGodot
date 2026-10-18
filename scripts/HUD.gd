@@ -39,8 +39,12 @@ func _on_end_turn_pressed() -> void:
 	GameManager.end_turn()
 
 
-func hit_display(hit: bool, wound: bool):
-	if hit and wound:
+func hit_display(hit: bool, wound: bool, crit: bool):
+	if hit and wound and crit:
+		$HitIndicator.color = Color(0.129, 0.612, 0.102, 1.0)
+		$HitIndicator/HitLabel.text = "Crit!"
+		$HitIndicator/HitLabel.add_theme_color_override("font_color", Color(1.0, 0.0, 0.0, 1.0))
+	elif hit and wound:
 		$HitIndicator.color = Color(0.129, 0.612, 0.102, 1.0)
 		$HitIndicator/HitLabel.text = "Hit!"
 	elif hit and !wound:
@@ -53,6 +57,7 @@ func hit_display(hit: bool, wound: bool):
 	$HitIndicator.visible = true
 	await get_tree().create_timer(1).timeout
 	$HitIndicator.visible = false
+	$HitIndicator/HitLabel.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
 
 
 func build_army():

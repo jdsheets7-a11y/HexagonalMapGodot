@@ -61,26 +61,30 @@ func _unhandled_input(event: InputEvent) -> void:
 				
 		
 		elif Input.is_action_just_pressed("RightClick"):
-			if hit_object.is_in_group("units"):
-				var attack_tiles = p_finder.find_attackable_tiles(
-					selected_unit.occupied_tile,
-					selected_unit.data.attack_range,
-					selected_unit.data.min_attack_range)
-				
-				if not attack_tiles.has(hit_object.occupied_tile):
-					print("Target out of range")
-					return
-				
-				GameManager.request_attack(selected_unit, hit_object)
-				
-			else:
-				if not p_finder.reachable_distances.has(hit_object):
-					print("Not enough movement")
-					return
-				
-				var distance = p_finder.reachable_distances[hit_object]
-				print("Distance: ", distance)
-				GameManager.request_move_unit(selected_unit, hit_object, distance)
+			match GameManager.game_state:
+				GameManager.GameState.TURN:
+					if hit_object.is_in_group("units"):
+						var attack_tiles = p_finder.find_attackable_tiles(
+							selected_unit.occupied_tile,
+							selected_unit.data.attack_range,
+							selected_unit.data.min_attack_range)
+						
+						if not attack_tiles.has(hit_object.occupied_tile):
+							print("Target out of range")
+							return
+						
+						GameManager.request_attack(selected_unit, hit_object)
+						
+					else:
+						if not p_finder.reachable_distances.has(hit_object):
+							print("Not enough movement")
+							return
+						
+						var distance = p_finder.reachable_distances[hit_object]
+						print("Distance: ", distance)
+						GameManager.request_move_unit(selected_unit, hit_object, distance)
+				_:
+					pass
 
 
 func raycast_at_mouse(origin, end) -> Node3D:
@@ -119,10 +123,13 @@ func select_unit(unit):
 	hide_cursor(tile_cursor)
 	if unit is Unit:
 		highlight_unit(unit)
-		
+		var flying: bool = false
+		if unit.data.FLYING:
+			flying = true
 		unit_moves = p_finder.find_reachable_tiles(
 			unit.occupied_tile,
-			unit.movement_remaining)
+			unit.movement_remaining,
+			flying)
 		p_finder.highlight_tile(unit_moves)
 		
 		attack_tiles = p_finder.find_attackable_tiles(

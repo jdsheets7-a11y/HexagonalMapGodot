@@ -33,7 +33,7 @@ enum LOSResult {
 func _ready():
 	GameManager.p_finder = self
 
-func find_reachable_tiles(start : Tile, movement_range: int) -> Array[Node3D]:
+func find_reachable_tiles(start: Tile, movement_range: int, flying: bool) -> Array[Node3D]:
 	reachable_distances.clear()
 	var queue = []
 	var visited = []
@@ -71,9 +71,9 @@ func find_reachable_tiles(start : Tile, movement_range: int) -> Array[Node3D]:
 			if not is_tile_valid(neighbor_coords) or visited.has(neighbor_coords):
 				continue
 			var neighbor_tile = WorldMap.map_as_dict[neighbor_coords]
-			if neighbor_tile.terrain != null and neighbor_tile.terrain.blocks_movement:
-				continue
-			
+			if not flying:
+				if neighbor_tile.terrain != null and neighbor_tile.terrain.blocks_movement:
+					continue
 			queue.append({"tile": neighbor_tile, "distance": current_distance + 1})
 			visited.append(neighbor_coords)
 		
@@ -205,6 +205,8 @@ func highlight_attack_tiles(selected_nodes: Array[Node3D]):
 	
 	for node in selected_nodes:
 		var tile: Tile = node
+		if tile == start_tile:
+			continue
 		if get_line_of_sight(start_tile, tile) == LOSResult.PARTIAL_COVER:
 			cover_tiles.append(tile)
 		elif reachable_distances.has(tile):
@@ -215,6 +217,21 @@ func highlight_attack_tiles(selected_nodes: Array[Node3D]):
 	# Hide movement markers on mixed tiles
 	for tile in mixed_tiles:
 		for marker in movement_markers:
+			if marker.visible and marker.position == tile.position:
+				marker.visible = false
+				break
+	
+	# Hide all markers on cover tiles
+	for tile in cover_tiles:
+		for marker in movement_markers:
+			if marker.visible and marker.position == tile.position:
+				marker.visible = false
+				break
+		for marker in attack_markers:
+			if marker.visible and marker.position == tile.position:
+				marker.visible = false
+				break
+		for marker in mixed_markers:
 			if marker.visible and marker.position == tile.position:
 				marker.visible = false
 				break
@@ -281,6 +298,7 @@ func update_fog():
 	var visible_tiles: Array[Tile] = []
 	var deployment_tiles = GameManager.get_deployment_tiles(GameManager.local_team)
 	var tiles
+	var flying: bool = false
 	
 	for unit in GameManager.units_by_id.values():
 		if unit.team != GameManager.local_team:
@@ -289,10 +307,13 @@ func update_fog():
 			print("FOG: friendly unit has no occupied_tile")
 			continue
 		
+		if unit.data.FLYING: 
+			flying = true
+		
 		if unit.data.SCOUT:
-			tiles = find_visible_tiles(unit.occupied_tile, VISION_RANGE + 1)
+			tiles = find_visible_tiles(unit.occupied_tile, VISION_RANGE + 1, flying)
 		else:
-			tiles = find_visible_tiles(unit.occupied_tile, VISION_RANGE)
+			tiles = find_visible_tiles(unit.occupied_tile, VISION_RANGE, flying)
 		
 		for tile in tiles:
 			visible_tiles.append(tile)
@@ -314,7 +335,7 @@ func update_fog():
 			tile.terrain_object.visible = not tile.fog.visible
 
 
-func find_visible_tiles(start: Tile, vision_range: int) -> Array[Tile]:
+func find_visible_tiles(start: Tile, vision_range: int, flying: bool) -> Array[Tile]:
 	var visible_tiles: Array[Tile] = []
 	var visited: Array[Tile] = []
 	var queue = []
@@ -330,7 +351,8 @@ func find_visible_tiles(start: Tile, vision_range: int) -> Array[Tile]:
 		var current_tile: Tile = current["tile"]
 		var current_distance: int = current["distance"]
 		
-		if get_line_of_sight(start, current_tile) != LOSResult.BLOCKED:
+		
+		if get_line_of_sight(start, current_tile) != LOSResult.BLOCKED or flying:
 			visible_tiles.append(current_tile)
 		
 		if current_distance >= vision_range:
@@ -354,10 +376,8 @@ func get_line_of_sight(start: Tile, target: Tile) -> LOSResult:
 	
 	var start_grid := Vector2i(start.pos_data.grid_position)
 	var target_grid := Vector2i(target.pos_data.grid_position)
-	
 	var start_cube := _grid_to_cube(start_grid)
 	var target_cube := _grid_to_cube(target_grid)
-	
 	var offsets: Array[Vector3] = [
 		Vector3.ZERO,
 		Vector3(0.0001, -0.0001, 0.0),
@@ -408,7 +428,7 @@ func _line_is_blocked(
 		
 		if tile.terrain != null and tile.terrain.blocks_los:
 			return true
-
+	
 	return false
 
 

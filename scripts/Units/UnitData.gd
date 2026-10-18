@@ -35,3 +35,4 @@ enum Faction {
 @export var EVASIVE: bool
 @export var BULKY: bool
 @export var IMPACT: bool
+@export var FLYING: bool

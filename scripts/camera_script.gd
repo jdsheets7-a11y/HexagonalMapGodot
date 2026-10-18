@@ -5,7 +5,7 @@ class_name CAMERA
 
 @export_category("Movement")
 @export var movespeed := 30.0
-@export var zoomspeed := 3.0
+@export var zoomspeed := 2.0
 
 @export_category("Camera")
 @export var default_distance := 20.0

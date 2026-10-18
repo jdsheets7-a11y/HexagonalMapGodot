@@ -10,6 +10,7 @@ const TANK  = preload("res://Resources/Units/Humans/Tank.tres")
 const SOLDIER = preload("res://Resources/Units/Humans/Soldier.tres")
 const FLAMETHROWER = preload("res://Resources/Units/Humans/Flamethrower.tres")
 const SNIPER = preload("res://Resources/Units/Humans/Sniper.tres")
+const CHOPPER = preload("res://Resources/Units/Humans/Chopper.tres")
 
 
 #Robots
@@ -26,6 +27,7 @@ static var unit_catalog := {
 	"FLAMETHROWER": FLAMETHROWER,
 	"SOLDIER": SOLDIER,
 	"SNIPER": SNIPER,
+	"CHOPPER": CHOPPER,
 	
 	
 	#Robots

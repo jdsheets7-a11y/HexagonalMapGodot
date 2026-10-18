@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://ryr2ywte50g1"]
+
+[ext_resource type="Script" uid="uid://cgwwpc3udlsdg" path="res://scripts/Units/UnitData.gd" id="1_ss6t4"]
+
+[resource]
+script = ExtResource("1_ss6t4")
+unit_name = "Chopper"
+health_per_troop = 25
+troops = 1
+movement_range = 5
+speed = 65
+accuracy = 65
+damage = 15
+armor_pen = 3
+attacks = 2
+attack_range = 4
+min_attack_range = 2
+armor = 5
+point_cost = 28
+EVASIVE = true
+FLYING = true
+metadata/_custom_type_script = "uid://cgwwpc3udlsdg"

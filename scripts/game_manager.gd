@@ -277,7 +277,7 @@ func request_attack(attacker: Unit, target: Unit):
 		evasion += 5
 	if target.data.BULKY:
 		evasion -= 5
-	if attacker.data.IMPACT and target.data.armor > 4:
+	if attacker.data.IMPACT and target.data.armor >= 5:
 		damage += damage * 0.5
 	
 	if attacker.attacks_remaining <= 0:
@@ -291,14 +291,18 @@ func request_attack(attacker: Unit, target: Unit):
 	for i in range(attacker.attacks_remaining):
 		var hit: bool = accuracy - evasion >= randi_range(1, 100)
 		var wound = false
+		var crit = false
 		
 		if hit:
 			wound = clamp(armor - pen, 0, armor) <= randi_range(1, 10)
+			if wound:
+				crit = randi_range(1,10) == 10
 		
 		attack_results.append({
 			"hit": hit,
 			"wound": wound,
-			"damage": damage
+			"damage": damage,
+			"crit": crit
 		})
 	
 	attack_unit.rpc(
@@ -330,15 +334,23 @@ func attack_unit(
 		
 		hud.hit_display(
 			result.hit,
-			result.wound
+			result.wound,
+			result.crit
 		)
+		var damage = result.damage
 		
 		if result.hit:
 			if result.wound:
 				print("Attack hit!")
-				target.health_remaining -= result.damage
+				if result.crit:
+					damage = result.damage * 1.5
+				target.health_remaining -= damage
 				target.update_health()
+			
 			else:
+				damage = result.damage * 0.5
+				target.health_remaining -= damage
+				target.update_health()
 				print("Attack blocked")
 		else:
 			print("Attack missed")
@@ -350,7 +362,6 @@ func attack_unit(
 	
 	await get_tree().create_timer(1.5).timeout
 	can_attack = true
-	
 
 
 func get_unit_by_id(unit_id: int) -> Unit:
