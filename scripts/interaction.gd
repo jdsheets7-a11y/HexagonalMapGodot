@@ -67,7 +67,10 @@ func _unhandled_input(event: InputEvent) -> void:
 						var attack_tiles = p_finder.find_attackable_tiles(
 							selected_unit.occupied_tile,
 							selected_unit.data.attack_range,
-							selected_unit.data.min_attack_range)
+							selected_unit.data.min_attack_range,
+							selected_unit.data.FLYING,
+							selected_unit.data.MELEE,
+							selected_unit.team)
 						
 						if not attack_tiles.has(hit_object.occupied_tile):
 							print("Target out of range")
@@ -110,7 +113,7 @@ func deselect():
 	hide_cursor(unit_cursor)
 	unit_moves.clear()
 	selected_unit = null
-	p_finder.clear_highlight()
+	p_finder.clear_movement_highlight()
 	p_finder.clear_attack_highlight()
 	get_tree().current_scene.get_node("CameraParent/CameraPitch/Camera3D/HUD/Inspector").visible = false
 
@@ -130,12 +133,15 @@ func select_unit(unit):
 			unit.occupied_tile,
 			unit.movement_remaining,
 			flying)
-		p_finder.highlight_tile(unit_moves)
+		p_finder.highlight_movement_tiles(unit_moves)
 		
 		attack_tiles = p_finder.find_attackable_tiles(
 			unit.occupied_tile, 
 			unit.data.attack_range,
-			unit.data.min_attack_range)
+			unit.data.min_attack_range,
+			unit.data.FLYING,
+			unit.data.MELEE,
+			unit.team)
 		p_finder.highlight_attack_tiles(attack_tiles)
 		
 		get_tree().current_scene.get_node("CameraParent/CameraPitch/Camera3D/HUD").update_inspector(selected_unit)

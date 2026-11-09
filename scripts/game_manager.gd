@@ -20,7 +20,7 @@ var units_by_id = {}
 var unit_scene = preload("res://scenes/Units/prototype_unit.tscn")
 
 var deployment_rows: Vector2
-const DEPLOYMENT_DEPTH := 4
+const DEPLOYMENT_DEPTH := 12
 
 var deploy_status = {
 	Unit.TeamStatus.TEAM_1: false,
@@ -275,8 +275,12 @@ func request_attack(attacker: Unit, target: Unit):
 		attacker.attacks_remaining = target.troops_remaining
 	if target.data.EVASIVE:
 		evasion += 5
+	if target.data.EVASIVE2:
+		evasion += 10
 	if target.data.BULKY:
 		evasion -= 5
+	if target.data.BULKY2:
+		evasion -= 10
 	if attacker.data.IMPACT and target.data.armor >= 5:
 		damage += damage * 0.5
 	

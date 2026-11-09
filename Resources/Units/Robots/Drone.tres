@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://67wpd6oclbf7"]
+
+[ext_resource type="Script" uid="uid://cgwwpc3udlsdg" path="res://scripts/Units/UnitData.gd" id="1_5olve"]
+
+[resource]
+script = ExtResource("1_5olve")
+unit_name = "Drone"
+health_per_troop = 8
+troops = 1
+movement_range = 5
+speed = 90
+armor = 1
+point_cost = 2
+faction = 1
+SCOUT = true
+EVASIVE2 = true
+FLYING = true
+metadata/_custom_type_script = "uid://cgwwpc3udlsdg"

@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://4pqwhcmqh35t" path="res://scripts/main_menu.gd" id="1_l6cm7"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vdmbh"]
+bg_color = Color(0.2868005, 0.681594, 0.5739108, 1)
+
 [node name="MainMenu" type="Control" unique_id=287742672]
 layout_mode = 3
 anchors_preset = 15
@@ -10,6 +13,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_l6cm7")
+metadata/_edit_use_anchors_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1193366529]
 layout_mode = 1
@@ -18,16 +22,17 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -102.0
-offset_top = -64.0
-offset_right = 102.0
-offset_bottom = 64.0
+offset_left = -351.75
+offset_top = -239.75
+offset_right = 351.75
+offset_bottom = 277.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="HostButton" type="Button" parent="VBoxContainer" unique_id=113223272]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 64
 text = "Host Game"
 
 [node name="HBoxContainer" type="BoxContainer" parent="VBoxContainer" unique_id=365629584]
@@ -37,13 +42,15 @@ size_flags_vertical = 3
 [node name="IPAddress" type="LineEdit" parent="VBoxContainer/HBoxContainer" unique_id=1819604822]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 48
 text = "127.0.0.1"
 
 [node name="JoinButton" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=579202088]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 64
 text = "Join Game"
 
 [node name="StatusLabel" type="Label" parent="VBoxContainer" unique_id=1350764732]
@@ -52,14 +59,28 @@ theme_override_font_sizes/font_size = 32
 text = "Disconnected"
 
 [node name="ArmyButton" type="Button" parent="VBoxContainer" unique_id=1040488289]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 64
 text = "Army Builder"
 
 [node name="StartButton" type="Button" parent="VBoxContainer" unique_id=1487933051]
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 64
 text = "Start Game"
+
+[node name="Panel" type="Panel" parent="." unique_id=1920843682]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -216.0
+offset_bottom = 182.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_vdmbh")
 
 [connection signal="pressed" from="VBoxContainer/HostButton" to="." method="_on_host_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/JoinButton" to="." method="_on_join_button_pressed"]

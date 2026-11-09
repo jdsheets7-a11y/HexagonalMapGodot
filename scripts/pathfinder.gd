@@ -11,6 +11,7 @@ var neighbor_positions = WorldMap.HEXAGONAL_NEIGHBOR_DIRECTIONS
 @export var cover_marker: PackedScene
 
 
+
 var data: UnitData
 
 var movement_markers = []
@@ -38,6 +39,7 @@ func find_reachable_tiles(start: Tile, movement_range: int, flying: bool) -> Arr
 	var queue = []
 	var visited = []
 	var reachable_tiles : Array[Node3D]
+	var selected_unit = GameManager.interaction.selected_unit
 	
 	# Start from the initial tile
 	queue.append({"tile": start, "distance": 0})
@@ -45,17 +47,16 @@ func find_reachable_tiles(start: Tile, movement_range: int, flying: bool) -> Arr
 	
 	while queue.size() > 0:
 		var current = queue.pop_front()
-		var current_tile : Tile = current["tile"]
-		var current_distance : int = current["distance"]
+		var current_tile: Tile = current["tile"]
+		var current_distance: int = current["distance"]
 		
 		if current_distance > movement_range:
 			continue
 		
-		# Add the current tile to the reachable list
-		reachable_tiles.append(current_tile)
-		
-		# Measures the distance moved
-		reachable_distances[current_tile] = current_distance
+		if current_tile.occupier == null:
+			if current_tile.terrain == null or not current_tile.terrain.blocks_movement:
+				reachable_tiles.append(current_tile)
+				reachable_distances[current_tile] = current_distance
 		
 		var current_pos = current_tile.pos_data.grid_position
 		
@@ -65,27 +66,36 @@ func find_reachable_tiles(start: Tile, movement_range: int, flying: bool) -> Arr
 			else:
 				neighbor_positions = WorldMap.NEIGHBOR_DIRECTIONS_ODD
 		
-		# Explore neighbors
 		for direction in neighbor_positions:
 			var neighbor_coords = Vector2(current_pos.x + int(direction.x), current_pos.y + int(direction.y))
-			if not is_tile_valid(neighbor_coords) or visited.has(neighbor_coords):
+			if not WorldMap.map_as_dict.has(neighbor_coords) or visited.has(neighbor_coords):
 				continue
+			
 			var neighbor_tile = WorldMap.map_as_dict[neighbor_coords]
+			
 			if not flying:
 				if neighbor_tile.terrain != null and neighbor_tile.terrain.blocks_movement:
 					continue
-			queue.append({"tile": neighbor_tile, "distance": current_distance + 1})
+				elif neighbor_tile.occupier != null:
+					if not selected_unit.data.NIMBLE and not neighbor_tile.occupier.data.FLYING:
+						continue
+			
+			var movement_cost: int = 1
+			if is_adjacent_to_enemy_melee(current_tile, selected_unit.team):
+				movement_cost += 1
+				
+			queue.append({"tile": neighbor_tile, "distance": current_distance + movement_cost})
 			visited.append(neighbor_coords)
 		
 	return reachable_tiles
 
 
-func find_attackable_tiles(start : Tile, attack_range: int, min_attack_range: int) -> Array[Node3D]:
+func find_attackable_tiles(start: Tile, attack_range: int, min_attack_range: int, flying: bool, melee: bool, team: int) -> Array[Node3D]:
 	attack_distances.clear()
 	var queue = []
 	var visited = []
 	var attackable_tiles : Array[Node3D]
-	# Start from the initial tile
+	
 	queue.append({"tile": start, "distance": 0})
 	visited.append(Vector2(start.pos_data.grid_position.x, start.pos_data.grid_position.y))
 	
@@ -96,11 +106,14 @@ func find_attackable_tiles(start : Tile, attack_range: int, min_attack_range: in
 		
 		if current_distance > attack_range:
 			continue
+		
 		if current_distance >= min_attack_range:
-			var los := get_line_of_sight(start, current_tile)
-			if los != LOSResult.BLOCKED:
-				if current_tile.terrain == null or not current_tile.terrain.blocks_movement:
-					attackable_tiles.append(current_tile)
+			var los := get_line_of_sight(start, current_tile, flying)
+			
+			if los != LOSResult.BLOCKED or (current_tile.occupier != null and current_tile.occupier.data.FLYING):
+				if current_tile.terrain == null or not current_tile.terrain.blocks_los:
+					if current_tile.occupier == null or current_tile.occupier.team != team:
+						attackable_tiles.append(current_tile)
 		
 		# Measures the attack distance
 		attack_distances[current_tile] = current_distance
@@ -130,18 +143,6 @@ func find_attackable_tiles(start : Tile, attack_range: int, min_attack_range: in
 	return attackable_tiles
 
 
-func is_tile_valid(coords : Vector2) -> bool:
-	var valid = false
-	if not WorldMap.map_as_dict.has(coords):
-		push_warning("Tile not in map!")
-		return false
-	var tile = WorldMap.map_as_dict[coords]
-	if tile:
-		if tile.occupier == null and tile.mesh_data.type != Tile.biome_type.Ocean:
-			valid = true
-	return valid
-
-
 func highlight_deployment_tiles(selected_nodes: Array[Tile]):
 	var marker_diff = selected_nodes.size() - deploy_markers.size()
 	
@@ -165,14 +166,15 @@ func clear_deployment_highlight():
 		marker.visible = false
 
 
-func highlight_tile(selected_nodes: Array[Node3D]):
+func highlight_movement_tiles(selected_nodes: Array[Node3D]):
 	var marker_diff = selected_nodes.size() - movement_markers.size()
+	
 	for m in range(marker_diff):
 		var new_marker = highlight_marker.instantiate()
 		add_child(new_marker)
 		movement_markers.append(new_marker)
 	
-	clear_highlight()
+	clear_movement_highlight()
 	
 	var start_tile: Tile = GameManager.interaction.selected_unit.occupied_tile
 	
@@ -188,7 +190,7 @@ func highlight_tile(selected_nodes: Array[Node3D]):
 				break
 
 
-func clear_highlight():
+func clear_movement_highlight():
 	if movement_markers and movement_markers.size() > 0:
 		for m in movement_markers:
 			m.visible = false
@@ -207,12 +209,33 @@ func highlight_attack_tiles(selected_nodes: Array[Node3D]):
 		var tile: Tile = node
 		if tile == start_tile:
 			continue
-		if get_line_of_sight(start_tile, tile) == LOSResult.PARTIAL_COVER:
-			cover_tiles.append(tile)
-		elif reachable_distances.has(tile):
-			mixed_tiles.append(tile)
+		
+		if GameManager.interaction.selected_unit.data.FLYING:
+			if reachable_distances.has(tile):
+				mixed_tiles.append(tile)
+			else:
+				attack_tiles.append(tile)
 		else:
-			attack_tiles.append(tile)
+			if get_line_of_sight(start_tile, tile) == LOSResult.PARTIAL_COVER:
+				cover_tiles.append(tile)
+			elif reachable_distances.has(tile):
+				mixed_tiles.append(tile)
+			else:
+				attack_tiles.append(tile)
+		
+		# Flying attacker: check for wall cover on neighboring tiles.
+		if GameManager.interaction.selected_unit.data.FLYING:
+			var wall_tiles: Array[Tile] = get_wall_tiles_on_line(start_tile, tile)
+			
+			for wall_tile in wall_tiles:
+				for neighbor in wall_tile.neighbors:
+					var neighbor_tile: Tile = neighbor
+					
+					if get_line_of_sight(start_tile, neighbor_tile) == LOSResult.BLOCKED:
+						if not cover_tiles.has(neighbor_tile):
+							cover_tiles.append(neighbor_tile)
+						attack_tiles.erase(neighbor_tile)
+						mixed_tiles.erase(neighbor_tile)
 	
 	# Hide movement markers on mixed tiles
 	for tile in mixed_tiles:
@@ -256,6 +279,15 @@ func highlight_attack_tiles(selected_nodes: Array[Node3D]):
 		var new_marker = cover_marker.instantiate()
 		add_child(new_marker)
 		cover_markers.append(new_marker)
+	
+	for marker in attack_markers:
+		marker.visible = false
+	
+	for marker in mixed_markers:
+		marker.visible = false
+	
+	for marker in cover_markers:
+		marker.visible = false
 	
 	# Display attack markers
 	for i in range(attack_tiles.size()):
@@ -350,10 +382,11 @@ func find_visible_tiles(start: Tile, vision_range: int, flying: bool) -> Array[T
 		var current = queue.pop_front()
 		var current_tile: Tile = current["tile"]
 		var current_distance: int = current["distance"]
+		var los = get_line_of_sight(start, current_tile)
 		
-		
-		if get_line_of_sight(start, current_tile) != LOSResult.BLOCKED or flying:
+		if los != LOSResult.BLOCKED or flying or (current_tile.occupier != null and current_tile.occupier.data.FLYING):
 			visible_tiles.append(current_tile)
+		
 		
 		if current_distance >= vision_range:
 			continue
@@ -370,7 +403,7 @@ func find_visible_tiles(start: Tile, vision_range: int, flying: bool) -> Array[T
 	
 	return visible_tiles
 
-func get_line_of_sight(start: Tile, target: Tile) -> LOSResult:
+func get_line_of_sight(start: Tile, target: Tile, flying: bool = false) -> LOSResult:
 	if start == target:
 		return LOSResult.CLEAR
 	
@@ -384,16 +417,19 @@ func get_line_of_sight(start: Tile, target: Tile) -> LOSResult:
 		Vector3(-0.0001, 0.0, 0.0001)
 	]
 	
-	var blocked_count := 0
-	
-	for offset in offsets:
-		if _line_is_blocked(start_cube, target_cube, offset):
-			blocked_count += 1
-	
-	if blocked_count == offsets.size():
-		return LOSResult.BLOCKED
-	elif blocked_count > 0:
-		return LOSResult.PARTIAL_COVER
+	if not flying:
+		var blocked_count := 0
+		
+		for offset in offsets:
+			if _line_is_blocked(start_cube, target_cube, offset):
+				blocked_count += 1
+		
+		if blocked_count == offsets.size():
+			return LOSResult.BLOCKED
+		elif blocked_count > 0:
+			return LOSResult.PARTIAL_COVER
+		
+		return LOSResult.CLEAR
 	
 	return LOSResult.CLEAR
 
@@ -401,35 +437,67 @@ func get_line_of_sight(start: Tile, target: Tile) -> LOSResult:
 func _line_is_blocked(
 	start_cube: Vector3i,
 	target_cube: Vector3i,
-	offset: Vector3
+	offset: Vector3,
+	wall_tiles: Array[Tile] = []
 ) -> bool:
 	var delta := target_cube - start_cube
 	var steps := maxi(
 		maxi(absi(delta.x), absi(delta.y)),
 		absi(delta.z)
 	)
-	
+
 	if steps == 0:
 		return false
-	
+
+	var blocked := false
+
 	for i in range(1, steps):
 		var t := float(i) / float(steps)
 		var point: Vector3 = Vector3(start_cube).lerp(
 			Vector3(target_cube), t
 		) + offset
-		
+
 		var cube := _cube_round(point)
 		var grid := _cube_to_grid(cube)
-		
+
 		if not WorldMap.map_as_dict.has(Vector2(grid)):
 			continue
-		
+
 		var tile: Tile = WorldMap.map_as_dict[Vector2(grid)]
-		
+
 		if tile.terrain != null and tile.terrain.blocks_los:
-			return true
-	
-	return false
+			blocked = true
+			if not wall_tiles.has(tile):
+				wall_tiles.append(tile)
+
+	return blocked
+
+
+func get_wall_tiles_on_line(start: Tile, target: Tile) -> Array[Tile]:
+	var wall_tiles: Array[Tile] = []
+
+	var start_cube := _grid_to_cube(
+		Vector2i(start.pos_data.grid_position)
+	)
+	var target_cube := _grid_to_cube(
+		Vector2i(target.pos_data.grid_position)
+	)
+
+	var offsets: Array[Vector3] = [
+		Vector3.ZERO,
+		Vector3(0.0001, -0.0001, 0.0),
+		Vector3(-0.0001, 0.0, 0.0001)
+	]
+
+	for offset in offsets:
+		_line_is_blocked(
+			start_cube,
+			target_cube,
+			offset,
+			wall_tiles
+		)
+
+	return wall_tiles
 
 
 func _grid_to_cube(grid: Vector2i) -> Vector3i:
@@ -465,3 +533,11 @@ func _cube_round(cube: Vector3) -> Vector3i:
 		s = -q - r
 	
 	return Vector3i(q, r, s)
+
+
+func is_adjacent_to_enemy_melee(tile: Tile, team: int) -> bool:
+	for neighbor in tile.neighbors:
+		if neighbor.occupier != null:
+			if neighbor.occupier.team != team and neighbor.occupier.data.MELEE:
+				return true
+	return false

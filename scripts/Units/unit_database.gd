@@ -18,6 +18,7 @@ const RIPPERS = preload("res://Resources/Units/Robots/Rippers.tres")
 const LAZER_MECH = preload("res://Resources/Units/Robots/Lazer_Mech.tres")
 const DESTROYER = preload("res://Resources/Units/Robots/Destroyer.tres")
 const AUTO_CANNON = preload("res://Resources/Units/Robots/Auto_Cannon.tres")
+const DRONE = preload("res://Resources/Units/Robots/Drone.tres")
 
 
 static var unit_catalog := {
@@ -34,7 +35,8 @@ static var unit_catalog := {
 	"RIPPERS": RIPPERS,
 	"LAZER_MECH": LAZER_MECH,
 	"AUTO_CANNON": AUTO_CANNON,
-	"DESTROYER": DESTROYER
+	"DESTROYER": DESTROYER,
+	"DRONE": DRONE
 }
 
 

@@ -6,8 +6,11 @@
 [ext_resource type="Script" uid="uid://bjw6prx0uxiil" path="res://scripts/WorldGen/world_gen.gd" id="3_davhy"]
 [ext_resource type="Theme" uid="uid://b1q5dev6y6ysl" path="res://Themes/button.tres" id="3_kxqg4"]
 [ext_resource type="Resource" uid="uid://bulbwto8ivwib" path="res://Resources/GenerationSettings/Default.tres" id="4_58wc8"]
+[ext_resource type="Shader" uid="uid://be78judbki72e" path="res://assets/Shaders/Metal.gdshader" id="4_lk0vr"]
+[ext_resource type="Shader" uid="uid://b68q7k0kiw5cf" path="res://assets/Shaders/New_Indent.gdshader" id="7_6nmf6"]
 [ext_resource type="PackedScene" uid="uid://b7wc00itifh8b" path="res://scenes/Terrain/wall.tscn" id="8_icif4"]
 [ext_resource type="PackedScene" uid="uid://grijaagmqw4" path="res://scenes/Units/prototype_unit.tscn" id="8_r58of"]
+[ext_resource type="FontVariation" uid="uid://b32ynkefuyblc" path="res://assets/Fonts/Spaced_out_Stamped.tres" id="9_a8ip2"]
 [ext_resource type="Script" uid="uid://bne86up5eweyd" path="res://scripts/WorldGen/object_placer.gd" id="9_p13dw"]
 [ext_resource type="Script" uid="uid://bdy82nphtcvus" path="res://scripts/pathfinder.gd" id="10_0b4my"]
 [ext_resource type="PackedScene" uid="uid://bmlm514w0iwkc" path="res://scenes/Cursors/attack_overlay.tscn" id="11_e8rlm"]
@@ -21,6 +24,42 @@
 [ext_resource type="PackedScene" uid="uid://d3f616gt02pfy" path="res://scenes/Cursors/mixed_overlay.tscn" id="16_iaegw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mf2rh"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vdmbh"]
+shader = ExtResource("4_lk0vr")
+shader_parameter/steel_color = Color(0.52, 0.54, 0.53, 1)
+shader_parameter/grain_strength = 0.025
+shader_parameter/lighting_strength = 0.12
+shader_parameter/grain_scale = 450.0
+shader_parameter/corner_radius = 20.0
+shader_parameter/rect_size = Vector2(375, 750)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1npfk"]
+shader = ExtResource("7_6nmf6")
+shader_parameter/highlight_width = 0.5
+shader_parameter/shadow_width = 2.5
+shader_parameter/bevel_strength = 0.7500000111759
+shader_parameter/face_color = Color(0.46, 0.48, 0.47, 1)
+shader_parameter/highlight_color = Color(0.84, 0.87, 0.85, 1)
+shader_parameter/shadow_color = Color(0.24, 0.27, 0.26, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6nmf6"]
+shader = ExtResource("7_6nmf6")
+shader_parameter/highlight_width = 0.5
+shader_parameter/shadow_width = 2.5
+shader_parameter/bevel_strength = 0.75
+shader_parameter/face_color = Color(0.46, 0.48, 0.47, 1)
+shader_parameter/highlight_color = Color(0.84, 0.87, 0.85, 1)
+shader_parameter/shadow_color = Color(0.24, 0.27, 0.26, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a8ip2"]
+shader = ExtResource("7_6nmf6")
+shader_parameter/highlight_width = 0.5
+shader_parameter/shadow_width = 2.5
+shader_parameter/bevel_strength = 0.75
+shader_parameter/face_color = Color(0.46, 0.48, 0.47, 1)
+shader_parameter/highlight_color = Color(0.84, 0.87, 0.85, 1)
+shader_parameter/shadow_color = Color(0.24, 0.27, 0.26, 1)
 
 [sub_resource type="Environment" id="Environment_f2ci6"]
 background_mode = 3
@@ -269,13 +308,19 @@ layer = 2
 script = ExtResource("2_w22tq")
 
 [node name="End Turn" type="Button" parent="CameraParent/CameraPitch/Camera3D/HUD" unique_id=723344998]
-offset_left = 1150.0
-offset_top = 600.0
-offset_right = 1250.0
-offset_bottom = 650.0
+anchors_preset = -1
+anchor_left = 0.871
+anchor_top = 0.817
+anchor_right = 0.925
+anchor_bottom = 0.817
+grow_horizontal = 2
+grow_vertical = 2
+offset_transform_enabled = true
 focus_mode = 0
+theme_override_font_sizes/font_size = 32
 text = "End turn
 "
+metadata/_edit_use_anchors_ = true
 
 [node name="TurnCounter" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD" unique_id=1283066970]
 offset_left = 1000.0
@@ -322,138 +367,223 @@ theme = ExtResource("3_kxqg4")
 theme_override_font_sizes/font_size = 24
 text = "Ready"
 
-[node name="Inspector" type="Panel" parent="CameraParent/CameraPitch/Camera3D/HUD" unique_id=422401666]
+[node name="Inspector" type="ColorRect" parent="CameraParent/CameraPitch/Camera3D/HUD" unique_id=1728945130]
 z_index = 10
-custom_minimum_size = Vector2(180, 340)
+material = SubResource("ShaderMaterial_vdmbh")
+custom_minimum_size = Vector2(180, 750)
 anchors_preset = -1
-anchor_right = 0.13700001
+anchor_left = 0.00026041668
+anchor_top = 0.14583333
+anchor_right = 0.19557291
+anchor_bottom = 0.8402778
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.52156866, 0.5372549, 0.5294118, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector" unique_id=411730100]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 200.0
-offset_right = 64.639984
-offset_bottom = -210.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector" unique_id=1143309628]
-layout_mode = 0
-offset_right = 230.0
-offset_bottom = 309.0
-
-[node name="Labels" type="VBoxContainer" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer" unique_id=680953106]
-custom_minimum_size = Vector2(150, 0)
+[node name="HBoxContainer" type="HBoxContainer" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer" unique_id=1143309628]
 layout_mode = 2
 
-[node name="Health" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=1108418798]
-custom_minimum_size = Vector2(140, 0)
+[node name="Labels" type="VBoxContainer" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer" unique_id=680953106]
+custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+size_flags_horizontal = 0
+
+[node name="Health" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Labels" unique_id=1108418798]
+material = SubResource("ShaderMaterial_1npfk")
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
 text = "Health:"
 horizontal_alignment = 2
+vertical_alignment = 1
 
-[node name="Armor" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=875746889]
-custom_minimum_size = Vector2(140, 0)
+[node name="Armor" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Labels" unique_id=875746889]
+material = SubResource("ShaderMaterial_1npfk")
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Armor: "
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+text = "Armor:"
 horizontal_alignment = 2
+vertical_alignment = 1
 
-[node name="Troops" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=1491361622]
+[node name="Troops" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Labels" unique_id=1491361622]
+material = SubResource("ShaderMaterial_1npfk")
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Troops:"
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.64049953, 0.63285697, 0.6213932, 1)
+theme_override_colors/font_shadow_color = Color(0.20814109, 0.20487949, 0.19835648, 1)
+theme_override_colors/font_outline_color = Color(0.15435892, 0.15085769, 0.14560351, 1)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 0
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+text = "TROOPS:"
 horizontal_alignment = 2
+vertical_alignment = 1
 
-[node name="Movement" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=1063749820]
-custom_minimum_size = Vector2(140, 0)
+[node name="Movement" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Labels" unique_id=1063749820]
+material = SubResource("ShaderMaterial_1npfk")
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Movement: "
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+text = "Movement:"
 horizontal_alignment = 2
+vertical_alignment = 1
 
-[node name="Damage" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=1205319038]
-custom_minimum_size = Vector2(140, 0)
+[node name="Damage" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Labels" unique_id=1205319038]
+material = SubResource("ShaderMaterial_1npfk")
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
 text = "Damage:"
 horizontal_alignment = 2
+vertical_alignment = 1
 
-[node name="Accuracy" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=382625374]
-custom_minimum_size = Vector2(140, 0)
+[node name="Accuracy" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Labels" unique_id=945819601]
+material = SubResource("ShaderMaterial_1npfk")
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Accuracy: "
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+text = "ACCURACY:"
 horizontal_alignment = 2
+vertical_alignment = 1
 
-[node name="Armor Pen" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=910991425]
-custom_minimum_size = Vector2(140, 0)
+[node name="Armor Pen" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Labels" unique_id=910991425]
+material = SubResource("ShaderMaterial_1npfk")
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Armor Pen: "
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+text = "Armor Pen:"
 horizontal_alignment = 2
+vertical_alignment = 1
 
-[node name="Range" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=422577467]
-custom_minimum_size = Vector2(140, 0)
+[node name="Range" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Labels" unique_id=422577467]
+material = SubResource("ShaderMaterial_1npfk")
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Range: "
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+text = "RANGE:"
 horizontal_alignment = 2
+vertical_alignment = 1
 
-[node name="Attacks" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Labels" unique_id=1652997171]
-custom_minimum_size = Vector2(140, 0)
+[node name="Attacks" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Labels" unique_id=1652997171]
+material = SubResource("ShaderMaterial_1npfk")
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Attacks:"
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+text = "ATTACKS:"
 horizontal_alignment = 2
+vertical_alignment = 1
 
-[node name="Values" type="VBoxContainer" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer" unique_id=192840689]
+[node name="Values" type="VBoxContainer" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer" unique_id=192840689]
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 
-[node name="HealthVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=827800883]
-custom_minimum_size = Vector2(50, 0)
+[node name="HealthVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Values" unique_id=827800883]
+material = SubResource("ShaderMaterial_6nmf6")
+custom_minimum_size = Vector2(50, 65)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+vertical_alignment = 1
 
-[node name="ArmorVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=291932362]
-custom_minimum_size = Vector2(50, 0)
+[node name="ArmorVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Values" unique_id=291932362]
+material = SubResource("ShaderMaterial_6nmf6")
+custom_minimum_size = Vector2(50, 65)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+vertical_alignment = 1
 
-[node name="TroopsVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1210292409]
-custom_minimum_size = Vector2(50, 0)
+[node name="TroopsVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Values" unique_id=1210292409]
+material = SubResource("ShaderMaterial_6nmf6")
+custom_minimum_size = Vector2(50, 65)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+vertical_alignment = 1
 
-[node name="MovementVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1979107697]
-custom_minimum_size = Vector2(50, 0)
+[node name="MovementVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Values" unique_id=1979107697]
+material = SubResource("ShaderMaterial_6nmf6")
+custom_minimum_size = Vector2(50, 65)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+vertical_alignment = 1
 
-[node name="DamageVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1039710935]
-custom_minimum_size = Vector2(50, 0)
+[node name="DamageVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Values" unique_id=1039710935]
+material = SubResource("ShaderMaterial_6nmf6")
+custom_minimum_size = Vector2(50, 65)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+vertical_alignment = 1
 
-[node name="AccuracyVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1373205109]
-custom_minimum_size = Vector2(50, 0)
+[node name="AccuracyVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Values" unique_id=1373205109]
+material = SubResource("ShaderMaterial_6nmf6")
+custom_minimum_size = Vector2(50, 65)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+vertical_alignment = 1
 
-[node name="ArmorPenVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1995455138]
-custom_minimum_size = Vector2(50, 0)
+[node name="ArmorPenVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Values" unique_id=1995455138]
+material = SubResource("ShaderMaterial_6nmf6")
+custom_minimum_size = Vector2(50, 65)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+vertical_alignment = 1
 
-[node name="RangeVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1426645679]
-custom_minimum_size = Vector2(50, 0)
+[node name="RangeVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Values" unique_id=1426645679]
+material = SubResource("ShaderMaterial_6nmf6")
+custom_minimum_size = Vector2(50, 65)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+vertical_alignment = 1
 
-[node name="AttacksVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/HBoxContainer/Values" unique_id=1598848694]
-custom_minimum_size = Vector2(50, 0)
+[node name="AttacksVal" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/HBoxContainer/Values" unique_id=1598848694]
+material = SubResource("ShaderMaterial_6nmf6")
+custom_minimum_size = Vector2(50, 65)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("9_a8ip2")
+theme_override_font_sizes/font_size = 48
+vertical_alignment = 1
+
+[node name="Keywords" type="GridContainer" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer" unique_id=1717051800]
+material = SubResource("ShaderMaterial_a8ip2")
+custom_minimum_size = Vector2(250, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_constants/h_separation = 40
+columns = 2
+
+[node name="Label" type="Label" parent="CameraParent/CameraPitch/Camera3D/HUD/Inspector/VBoxContainer/Keywords" unique_id=1898118139]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Keyword"
+horizontal_alignment = 1
 
 [node name="HitIndicator" type="ColorRect" parent="CameraParent/CameraPitch/Camera3D/HUD" unique_id=1585710598]
 visible = false
@@ -511,6 +641,7 @@ size_flags_vertical = 3
 texture = ExtResource("2_l7mlp")
 expand_mode = 3
 stretch_mode = 4
+metadata/_edit_use_anchors_ = true
 
 [node name="Builder" type="Node" parent="." unique_id=2024913899]
 

@@ -1,11 +1,10 @@
 extends Control
 
-@onready var grid = $UnitPanel/VBoxContainer/ScrollContainer/GridContainer
+@onready var grid = $HBoxContainer/UnitPanel/VBoxContainer/GridContainer
 var unit_container = preload("res://scenes/unit_container.tscn")
 
 var data : UnitData
 var point_count: int = 0
-
 
 
 func _on_back_button_pressed() -> void:
@@ -45,9 +44,9 @@ func load_units(faction: UnitData.Faction):
 
 
 func _on_unit_selected(unit: UnitData):
-	$YourArmyPanel/VBoxContainer/ArmyList.add_item(unit.unit_name)
+	$HBoxContainer/YourArmyPanel/VBoxContainer/ArmyList.add_item(unit.unit_name)
 	point_count += unit.point_cost
-	$YourArmyPanel/VBoxContainer/HBoxContainer/PointCount.text = str(point_count)
+	$HBoxContainer/YourArmyPanel/VBoxContainer/HBoxContainer/PointCount.text = str(point_count)
 	GameManager.army_list.append(unit)
 
 

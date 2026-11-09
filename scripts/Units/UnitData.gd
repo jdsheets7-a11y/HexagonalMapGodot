@@ -33,6 +33,25 @@ enum Faction {
 @export var NIMBLE: bool
 @export var SCOUT: bool
 @export var EVASIVE: bool
+@export var EVASIVE2: bool
 @export var BULKY: bool
+@export var BULKY2: bool
 @export var IMPACT: bool
 @export var FLYING: bool
+
+var keywords_ordered: Dictionary = {}
+
+func update_keywords_ordered():
+	keywords_ordered = {
+		"FLYING": FLYING,
+		"MELEE": MELEE,
+		"INFANTRY": INFANTRY,
+		"CONTROL":CONTROL,
+		"NIMBLE":NIMBLE,
+		"SCOUT": SCOUT,
+		"IMPACT": IMPACT,
+		"EVASIVE": EVASIVE,
+		"EVASIVE2": EVASIVE2,
+		"BULKY": BULKY,
+		"BULKY2": BULKY2
+		}

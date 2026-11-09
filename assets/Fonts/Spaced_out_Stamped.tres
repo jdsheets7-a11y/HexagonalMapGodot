@@ -1,0 +1,8 @@
+[gd_resource type="FontVariation" format=3 uid="uid://b32ynkefuyblc"]
+
+[ext_resource type="FontFile" uid="uid://bbn6p2fbb5l8" path="res://assets/Fonts/ARMY RUST.ttf" id="1_wh451"]
+
+[resource]
+resource_name = "Stamped words"
+base_font = ExtResource("1_wh451")
+spacing_glyph = 1

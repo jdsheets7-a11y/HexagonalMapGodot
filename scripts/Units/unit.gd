@@ -12,12 +12,12 @@ var total_health: int
 @export var has_moved: bool = false
 @export var has_attacked: bool = false
 @export var team = TeamStatus.TEAM_1
+@export var active_keywords: Array = []
 
 var occupied_tile: Tile
 var unit_id: int = -1
 
 enum TeamStatus {TEAM_1, TEAM_2}
-
 
 func _ready() -> void:
 	initialize()
@@ -37,6 +37,14 @@ func initialize():
 	attacks_remaining = data.attacks
 	movement_remaining = data.movement_range
 	troops_remaining = data.troops
+	
+	data.update_keywords_ordered()
+	print(data.keywords_ordered)
+	
+	for keyword in data.keywords_ordered:
+		if data.keywords_ordered[keyword]:
+			active_keywords.append(keyword)
+	print(active_keywords)
 
 
 # Put this unit on a tile at position
@@ -72,7 +80,7 @@ func update_health():
 	bar.value = health_remaining
 	
 	$Healthbar/HealthNumber.text = "%d / %d" % [health_remaining, total_health]
-	troops_remaining = ceil(health_remaining/data.health_per_troop)
+	troops_remaining = ceili(float(health_remaining)/data.health_per_troop)
 	
 	var index = GameManager.master_unit_list.find(self)
 	if health_remaining <= 0:
@@ -81,8 +89,4 @@ func update_health():
 		GameManager.master_unit_list.erase(self)
 		GameManager.units_by_id.erase(unit_id)
 		
-		print("Dying unit ID: ", unit_id)
-		#print("Dictionary contains ID before erase: ", GameManager.units_by_id.has(unit_id))
-		#GameManager.units_by_id.erase(unit_id)
-		#print("Dictionary contains ID after erase: ", GameManager.units_by_id.has(unit_id))
 		queue_free()

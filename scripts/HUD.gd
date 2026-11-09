@@ -1,10 +1,28 @@
 extends CanvasLayer
 class_name HUD
 
-@onready var val = $Inspector/HBoxContainer/Values
+@onready var val = $Inspector/VBoxContainer/HBoxContainer/Values
 @onready var army = $DeployPanel/VBoxContainer/ArmyList
 @onready var deploy_panel = $DeployPanel
+@onready var keywords_grid: GridContainer = $Inspector/VBoxContainer/Keywords
 
+var stamped_font = preload("res://assets/Fonts/Spaced_out_Stamped.tres")
+var stamped_material = preload("res://assets/Shaders/New_Indent.gdshader")
+
+
+const KEYWORD_COLORS = {
+	"FLYING": Color("#4DA6FF"),
+	"MELEE": Color("#E74C3C"),
+	"INFANTRY": Color("#75C46B"),
+	"CONTROL": Color("#B18CFF"),
+	"NIMBLE": Color("#F4D35E"),
+	"SCOUT": Color("#42D6D6"),
+	"IMPACT": Color("#FF9F43"),
+	"EVASIVE": Color("#66CDAA"),
+	"EVASIVE2": Color("#48A999"),
+	"BULKY": Color("#C49A6C"),
+	"BULKY2": Color("#96704B")
+}
 
 func _ready():
 	GameManager.hud = self
@@ -16,7 +34,6 @@ func _process(_delta: float) -> void:
 	$TurnCounter.text= "Round: " + str(GameManager.turn_counter)
 
 
-#Update the stat inspector
 func update_inspector(unit):
 	var data : UnitData
 	val.get_node("HealthVal").text = str(unit.health_remaining) \
@@ -33,6 +50,37 @@ func update_inspector(unit):
 	val.get_node("AttacksVal").text = str(unit.data.attacks)
 	
 	$Inspector.visible = true
+	
+	update_keyword_display(unit.active_keywords)
+
+
+func update_keyword_display(active_keywords: Array):
+	for child in keywords_grid.get_children():
+		keywords_grid.remove_child(child)
+		child.queue_free()
+		
+	for keyword in active_keywords:
+		var color: Color = KEYWORD_COLORS.get(keyword, Color.WHITE)
+		if active_keywords.size() == 1:
+			keywords_grid.columns = 1
+		else:
+			keywords_grid.columns = 2
+		
+		var label = Label.new()
+		label.text = keyword
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		
+		var material = ShaderMaterial.new()
+		material.shader = stamped_material
+		material.set_shader_parameter("face_color", color)
+		
+		label.material = material
+		label.add_theme_font_override("font", stamped_font)
+		label.add_theme_font_size_override("font_size", 48)
+		
+		
+		keywords_grid.add_child(label)
 
 
 func _on_end_turn_pressed() -> void:
